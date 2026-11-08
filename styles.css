@@ -1,0 +1,1913 @@
+/* Impact is a system font (Windows/Mac/iOS). Anton is the free look-alike used
+   on devices that don't have Impact, such as Android and Linux. */
+
+/* Cascadia Code, bundled in /fonts (variable font: weights 200 to 700) */
+@font-face {
+  font-family: "Cascadia Code";
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("fonts/cascadia-code-latin-wght-normal.woff2")
+    format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* =========================================================
+   ACP-Studio — Glass theme
+   Warm Sand palette (from the reference image):
+     01 Rich Sand    #ac774f
+     02 Golden Sand  #d7a87a
+     03 Soft Beige   #e3c6a6
+     04 Light Sand   #ecd8bf
+     05 Ivory Sand   #f5e9d9
+   Text is a dark brown (#37251b) taken from the reference.
+   There are no blue, teal or purple colors anywhere in this file.
+   Glass: heavy blur, thin tinted edge, one shared corner radius.
+   ========================================================= */
+
+/* ===== CSS Variables & Theme Foundation ===== */
+:root {
+  /* Warm Sand */
+  --sand-1: #ac774f; /* 01 Rich Sand */
+  --sand-2: #d7a87a; /* 02 Golden Sand */
+  --sand-3: #e3c6a6; /* 03 Soft Beige */
+  --sand-4: #ecd8bf; /* 04 Light Sand */
+  --sand-5: #f5e9d9; /* 05 Ivory Sand */
+
+  /* Deeper tones of the same sand, for text and small accents
+     (the light sands alone are too pale to read on a sand background) */
+  --sand-deep: #7a4e2d;
+  --brown-800: #37251b;
+  --brown-900: #2b1b12;
+  /* Used only for errors and "Log out" so they still read as warnings */
+  --clay: #9c4a2f;
+
+  /* Roles */
+  --bg-primary: var(--sand-5);
+  --bg-secondary: var(--sand-4);
+  --bg-tertiary: var(--sand-3);
+  --text-primary: var(--brown-800);
+  --text-secondary: #5b4130;
+  --text-tertiary: #6e5444;
+  --accent-primary: var(--sand-deep);
+  --accent-secondary: #4a2e1c;
+  --accent-warm: var(--sand-1);
+  --accent-subtle: var(--sand-2);
+
+  color-scheme: light;
+
+  /* Signature gradient for headings (kept dark enough to read on sand) */
+  --gradient-aurora: linear-gradient(
+    110deg,
+    #4a2e1c 0%,
+    var(--sand-deep) 35%,
+    var(--sand-1) 72%,
+    #b98350 100%
+  );
+  /* Gradient for buttons: the sand palette from rich to soft */
+  --gradient-button: linear-gradient(
+    110deg,
+    var(--sand-1) 0%,
+    var(--sand-2) 50%,
+    var(--sand-3) 100%
+  );
+
+  /* Glass tokens (light glass: white tint, warm brown shadows) */
+  --glass-fill: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.22) 45%,
+    rgba(255, 255, 255, 0.38) 100%
+  );
+  --glass-fill-hover: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.32) 45%,
+    rgba(255, 255, 255, 0.52) 100%
+  );
+  --glass-blur: blur(24px) saturate(115%);
+  --glass-shadow:
+    0 20px 50px rgba(110, 70, 40, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(172, 119, 79, 0.2);
+  --glass-shadow-hover:
+    0 26px 64px rgba(110, 70, 40, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(172, 119, 79, 0.3);
+  --border-glass: rgba(172, 119, 79, 0.35);
+
+  /* Shape */
+  /* One corner radius for the whole site. Small items (tags, buttons) are
+     shorter than twice this, so they come out as pills automatically. */
+  --radius: 26px;
+  --radius-card: var(--radius);
+  --radius-pill: var(--radius);
+
+  /* Typography */
+  --font-display: Impact, Haettenschweiler, "Anton", "Arial Narrow Bold", sans-serif;
+  --font-body: "Cascadia Code", "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+
+  /* Spacing & Layout */
+  --spacing-unit: 1rem;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 6rem;
+
+  /* Transitions & Animations */
+  /* Very smooth: soft ease for fades and colors, a gentle spring (tiny
+     overshoot) for movement, and long durations. */
+  --transition-smooth: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-spring: cubic-bezier(0.22, 1.06, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 500ms;
+  --duration-normal: 750ms;
+  --duration-slow: 1100ms;
+
+  /* One motion language for the whole site: transforms use the island's spring,
+     colors, fills and shadows ease softly alongside it. */
+  --transition-surface:
+    transform var(--duration-slow) var(--ease-spring),
+    background var(--duration-normal) var(--transition-smooth),
+    background-color var(--duration-normal) var(--transition-smooth),
+    border-color var(--duration-normal) var(--transition-smooth),
+    box-shadow var(--duration-normal) var(--transition-smooth),
+    color var(--duration-normal) var(--transition-smooth),
+    opacity var(--duration-normal) var(--transition-smooth);
+}
+
+/* ===== Global Styles ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Impact has one weight; never fake a bolder one */
+  font-synthesis: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-display);
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+body {
+  background: linear-gradient(
+    155deg,
+    var(--sand-5) 0%,
+    var(--sand-4) 38%,
+    var(--sand-3) 78%,
+    #dfbf9d 100%
+  );
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Color fields behind everything: this is what the glass blurs.
+   Two layers drift in opposite directions. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -12%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background:
+    radial-gradient(
+      42vmax 42vmax at 10% 14%,
+      rgba(215, 168, 122, 0.5),
+      transparent 62%
+    ),
+    radial-gradient(
+      36vmax 36vmax at 90% 22%,
+      rgba(172, 119, 79, 0.22),
+      transparent 62%
+    ),
+    radial-gradient(
+      46vmax 46vmax at 78% 90%,
+      rgba(172, 119, 79, 0.34),
+      transparent 62%
+    ),
+    radial-gradient(
+      40vmax 40vmax at 16% 86%,
+      rgba(215, 168, 122, 0.55),
+      transparent 62%
+    ),
+    radial-gradient(
+      38vmax 38vmax at 56% 54%,
+      rgba(227, 198, 166, 0.5),
+      transparent 62%
+    );
+}
+
+body::after {
+  background:
+    radial-gradient(
+      26vmax 26vmax at 50% 8%,
+      rgba(255, 255, 255, 0.5),
+      transparent 60%
+    ),
+    radial-gradient(
+      28vmax 28vmax at 6% 50%,
+      rgba(245, 233, 217, 0.55),
+      transparent 60%
+    ),
+    radial-gradient(
+      30vmax 30vmax at 96% 56%,
+      rgba(215, 168, 122, 0.3),
+      transparent 60%
+    ),
+    radial-gradient(
+      32vmax 32vmax at 46% 64%,
+      rgba(172, 119, 79, 0.14),
+      transparent 60%
+    ),
+    radial-gradient(
+      30vmax 30vmax at 84% 8%,
+      rgba(215, 168, 122, 0.32),
+      transparent 60%
+    ),
+    radial-gradient(
+      34vmax 34vmax at 4% 98%,
+      rgba(255, 255, 255, 0.35),
+      transparent 60%
+    );
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 3%, 0) scale(1.08);
+  }
+}
+
+/* Smooth cross-fade when moving between pages (Chrome, Edge, Safari) */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 700ms;
+  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+::selection {
+  background: rgba(172, 119, 79, 0.3);
+}
+
+:focus-visible {
+  outline: 2px solid var(--sand-deep);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   Glass edge: thin bright rim, brighter on the top-left and
+   bottom-right corners like the reference shapes.
+   ========================================================= */
+.dynamic-island,
+.intro-tag,
+.visual-card,
+.project-card,
+.studio-featured,
+.stat-box,
+.project-link,
+.youtube-project-link,
+.project-notice,
+.project-tag,
+.login-card,
+.input-glass,
+.btn-glass {
+  position: relative;
+}
+
+.dynamic-island {
+  position: fixed;
+}
+
+.dynamic-island::after,
+.intro-tag::after,
+.visual-card::after,
+.project-card::after,
+.studio-featured::after,
+.stat-box::after,
+.project-link::after,
+.youtube-project-link::after,
+.project-notice::after,
+.project-tag::after,
+.login-card::after,
+.input-glass::after,
+.btn-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, var(--edge-strong, 0.9)) 0%,
+    rgba(255, 255, 255, 0.2) 30%,
+    rgba(172, 119, 79, 0.1) 70%,
+    rgba(172, 119, 79, var(--edge-mid, 0.5)) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity var(--duration-normal) var(--transition-smooth);
+}
+
+.project-card:hover,
+.studio-featured:hover,
+.visual-card:hover,
+.intro-tag:hover,
+.project-link:hover,
+.youtube-project-link:hover,
+.input-glass:focus-within,
+.btn-glass:hover {
+  --edge-strong: 1;
+  --edge-mid: 0.8;
+}
+
+/* ===== Dynamic Island Navigation (macOS-style) ===== */
+/* Opens downward: the island gets wider and the links drop in as a vertical list. */
+.dynamic-island {
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 176px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 52px 0fr;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background-color: rgba(245, 233, 217, 0.55);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  backdrop-filter: blur(28px) saturate(115%);
+  -webkit-backdrop-filter: blur(28px) saturate(115%);
+  box-shadow:
+    0 12px 40px rgba(110, 70, 40, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(172, 119, 79, 0.2);
+  transition:
+    width 1300ms var(--ease-spring),
+    padding 1300ms var(--ease-spring),
+    grid-template-rows 1300ms var(--ease-spring),
+    border-radius 800ms var(--ease-spring),
+    background-color 500ms var(--transition-smooth),
+    box-shadow 500ms var(--transition-smooth);
+}
+
+.dynamic-island.expanded {
+  width: min(calc(100vw - 2rem), 380px);
+  padding: 0 12px;
+  grid-template-rows: 52px 1fr;
+  border-radius: var(--radius);
+  background-color: rgba(245, 233, 217, 0.78);
+  box-shadow:
+    0 24px 70px rgba(110, 70, 40, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(172, 119, 79, 0.25);
+}
+
+.island-status {
+  display: grid;
+  /* fixed-width column so the hidden name can't push the label off-center */
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  height: 52px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  white-space: nowrap;
+  font-family: "impact";
+}
+
+/* Closed: the name of the section you are reading. Open: it blurs away while the name fades in. */
+.island-section,
+.island-name {
+  grid-area: 1 / 1;
+}
+
+.island-section {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--text-primary);
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+  transition:
+    opacity var(--duration-normal) var(--transition-smooth) 160ms,
+    transform var(--duration-slow) var(--ease-spring) 120ms,
+    filter var(--duration-normal) var(--transition-smooth) 160ms;
+}
+
+/* The text itself swaps with a quick fade + slide when you scroll to a new section */
+.island-section span {
+  display: inline-block;
+  transition:
+    opacity 220ms var(--transition-smooth),
+    transform 220ms var(--transition-smooth);
+}
+
+.island-section span.is-swapping {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.island-name {
+  opacity: 0;
+  transform: translateY(12px) scale(0.94);
+  filter: blur(8px);
+  letter-spacing: 1px;
+  background: var(--gradient-aurora);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition:
+    opacity var(--duration-fast) var(--transition-smooth),
+    transform var(--duration-normal) var(--ease-spring),
+    filter var(--duration-fast) var(--transition-smooth);
+}
+
+.dynamic-island.expanded .island-section {
+  opacity: 0;
+  transform: scale(0.9);
+  filter: blur(8px);
+  transition-delay: 0ms;
+}
+
+.dynamic-island.expanded .island-name {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition:
+    opacity var(--duration-normal) var(--transition-smooth) 220ms,
+    transform var(--duration-slow) var(--ease-spring) 180ms,
+    filter var(--duration-normal) var(--transition-smooth) 220ms;
+}
+
+/* Login page before logging in: the island shows only the logo */
+.dynamic-island.is-locked .island-nav {
+  display: none;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow:
+      0 0 12px var(--accent-primary),
+      0 0 0 0 rgba(172, 119, 79, 0.5);
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+    box-shadow:
+      0 0 12px var(--accent-primary),
+      0 0 0 12px rgba(172, 119, 79, 0);
+  }
+}
+
+/* Link grid, 3 rows: [Home | C++ Projects] [YouTube Studio | Contact] [Log in / Log out].
+   The row grows from 0 to its content height together with the island. */
+.island-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--duration-normal) var(--transition-smooth),
+    visibility 0s linear var(--duration-slow);
+}
+
+.island-nav.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity var(--duration-normal) var(--transition-smooth) 130ms,
+    visibility 0s;
+}
+
+.island-nav a {
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  padding: 11px 8px;
+  border-radius: var(--radius);
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  filter: blur(6px);
+  transition:
+    opacity var(--duration-normal) var(--transition-smooth),
+    transform var(--duration-slow) var(--ease-spring),
+    filter var(--duration-normal) var(--transition-smooth),
+    color var(--duration-fast) var(--transition-smooth),
+    background var(--duration-fast) var(--transition-smooth);
+}
+
+/* Third row: the log in / log out link spans the full width */
+.island-nav a:last-child {
+  grid-column: 1 / -1;
+  margin-bottom: 12px;
+}
+
+.island-nav.active a {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Links drop in row by row, left to right */
+.island-nav.active a:nth-child(1) {
+  transition-delay: 120ms, 120ms, 120ms, 0ms, 0ms;
+}
+.island-nav.active a:nth-child(2) {
+  transition-delay: 170ms, 170ms, 170ms, 0ms, 0ms;
+}
+.island-nav.active a:nth-child(3) {
+  transition-delay: 240ms, 240ms, 240ms, 0ms, 0ms;
+}
+.island-nav.active a:nth-child(4) {
+  transition-delay: 290ms, 290ms, 290ms, 0ms, 0ms;
+}
+.island-nav.active a:nth-child(5) {
+  transition-delay: 360ms, 360ms, 360ms, 0ms, 0ms;
+}
+
+.island-nav a:hover,
+.island-nav a[aria-current="page"] {
+  color: var(--accent-secondary);
+  background: rgba(172, 119, 79, 0.16);
+}
+
+/* Log out (shown only while logged in): warm clay, stronger on hover */
+.island-nav a.is-logout {
+  color: var(--clay);
+  background: rgba(156, 74, 47, 0.12);
+}
+
+.island-nav a.is-logout:hover {
+  color: #7d3520;
+  background: rgba(156, 74, 47, 0.24);
+}
+
+/* ===== Mobile Responsiveness for Island ===== */
+@media (max-width: 768px) {
+  .dynamic-island {
+    top: 12px;
+  }
+
+  .island-nav a {
+    font-size: 0.85rem;
+    padding: 11px 4px;
+  }
+}
+
+/* ===== Container & Grid ===== */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+/* ===== Hero / Intro Section ===== */
+.intro-section {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: center;
+  padding-top: 140px;
+  padding-bottom: var(--spacing-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.intro-section::before {
+  content: "";
+  position: absolute;
+  top: -400px;
+  right: -400px;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(
+    circle,
+    rgba(172, 119, 79, 0.14) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.intro-content {
+  position: relative;
+  z-index: 2;
+}
+
+.intro-tag {
+  display: inline-block;
+  background: var(--glass-fill);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-md);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: var(--transition-surface);
+  box-shadow: var(--glass-shadow);
+}
+
+.intro-tag:hover {
+  background: var(--glass-fill-hover);
+  transform: scale(1.05);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+.intro-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: bolder;
+  line-height: 1.1;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: 1px;
+  font-family: "impact";
+  /* palette gradient text (replaces the old flat gold) */
+  background: var(--gradient-aurora);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.intro-subheading {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-lg);
+  max-width: 540px;
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+.intro-cta {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-surface);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  letter-spacing: 0;
+}
+
+.btn-primary {
+  background: var(--gradient-button);
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  color: var(--brown-900);
+  border: none;
+  box-shadow: 0 10px 28px rgba(110, 70, 40, 0.3);
+}
+
+.btn-primary:hover {
+  background-position: 100% 50%;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 38px rgba(172, 119, 79, 0.42);
+}
+
+.btn-primary {
+  transition: 330ms ease-in;
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: progress;
+  transform: none;
+}
+
+.btn-glass {
+  background: var(--glass-fill);
+  color: var(--text-primary);
+  border: none;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+}
+
+.btn-glass:hover {
+  background: var(--glass-fill-hover);
+  transform: translateY(-2px);
+}
+
+/* Press: the button squeezes in, then springs back */
+.btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.intro-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+}
+
+.visual-card {
+  background: var(--glass-fill);
+  border-radius: var(--radius);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--spacing-md);
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition-surface);
+}
+
+.intro-visual .visual-card .card-header {
+  text-align: center;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.intro-visual .visual-card .card-header h3 {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.intro-visual .visual-card .card-divider {
+  width: 100%;
+  height: 1px;
+  border: 0;
+  background: rgba(172, 119, 79, 0.3);
+  margin: 0;
+}
+
+.visual-card:hover {
+  background: var(--glass-fill-hover);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+.intro-visual .visual-card img {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  object-fit: cover;
+  display: block;
+  border-radius: var(--radius);
+}
+
+/* ===== Projects Section ===== */
+.projects-section {
+  padding: var(--spacing-xl) 0;
+  position: relative;
+}
+
+.section-header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: 1px;
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  font-weight: 600;
+  max-width: 640px;
+  line-height: 1.7;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.project-card {
+  background: var(--glass-fill);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-lg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  cursor: pointer;
+  transition: var(--transition-surface);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+}
+
+.project-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transition: left var(--duration-slow) var(--transition-smooth);
+  pointer-events: none;
+}
+
+.project-card:hover {
+  background: var(--glass-fill-hover);
+  transform: translateY(-6px) scale(1.012);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+.project-card:hover::before {
+  left: 100%;
+}
+
+.project-tag {
+  display: inline-flex;
+  background: rgba(172, 119, 79, 0.12);
+  color: var(--accent-primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+  margin-bottom: var(--spacing-md);
+}
+
+/* ===== Card header row: category tag + status badge ===== */
+.project-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.project-top .project-tag {
+  margin-bottom: 0;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-pill);
+  background: rgba(215, 168, 122, 0.28);
+  border: 1px solid var(--border-glass);
+  color: var(--accent-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* small pulsing dot = "work in progress" */
+.status-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--clay);
+  animation: status-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-badge::before {
+    animation: none;
+  }
+}
+
+.project-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-sm);
+  transition: color var(--duration-fast) var(--transition-smooth);
+}
+
+.project-card:hover .project-title {
+  color: var(--sand-deep);
+}
+
+.project-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+  flex-grow: 1;
+}
+
+.project-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-glass);
+}
+
+.project-tech {
+  display: grid;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.tech-badge {
+  background: rgba(172, 119, 79, 0.12);
+  color: var(--accent-secondary);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 1px solid var(--border-glass);
+}
+
+.youtube-project-link,
+.project-link,
+.project-notice {
+  color: var(--accent-primary);
+  display: flex;
+  margin: 4px;
+  padding: 4px 14px;
+  text-decoration: none;
+  background: rgba(172, 119, 79, 0.12);
+  border-radius: var(--radius-pill);
+  font-size: 0.966rem;
+  font-weight: bold;
+  align-items: center;
+  transition: var(--transition-surface);
+}
+
+.bxl-youtube,
+.bxl-github {
+  margin: 2px;
+}
+
+.youtube-project-link:hover,
+.project-link:hover {
+  background: rgba(172, 119, 79, 0.22);
+  color: var(--accent-secondary);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 24px rgba(110, 70, 40, 0.22);
+}
+
+/* Sentence box shown instead of the buttons when a project doesn't exist yet.
+   Same glass look as the GitHub / YouTube boxes (shared rule above), but it is
+   not a link, so it has no hover lift and a normal cursor. */
+.project-notice {
+  flex: 1;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 22px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  cursor: default;
+}
+
+/* ===== YouTube Section ===== */
+.studio-section {
+  padding: var(--spacing-xl) 0;
+  position: relative;
+}
+
+.studio-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-lg);
+  align-items: stretch;
+}
+
+.studio-featured {
+  background: var(--glass-fill);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-lg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  transition: var(--transition-surface);
+}
+
+.studio-featured:hover {
+  background: var(--glass-fill-hover);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+.studio-thumbnail {
+  width: 100%;
+  height: 240px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  opacity: 0.85;
+}
+
+.studio-thumbnail img {
+  object-fit: cover;
+  width: 100%;
+  border-radius: var(--radius);
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+.studio-info h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-primary);
+}
+
+.studio-info p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.studio-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.4);
+  padding: var(--spacing-md) var(--spacing-xs);
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.stat-number {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--sand-deep);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Footer ===== */
+footer {
+  border-top: 1px solid var(--border-glass);
+  padding: var(--spacing-xl) 0;
+  margin-top: var(--spacing-xl);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.18)
+  );
+  backdrop-filter: blur(24px) saturate(115%);
+  -webkit-backdrop-filter: blur(24px) saturate(115%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.footer-name h5 {
+  font-size: 2.2rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.footer-brand h3 {
+  color: var(--text-secondary);
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.footer-brand h3 i {
+  color: var(--text-secondary);
+}
+
+.footer-brand p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.footer-links h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--spacing-md);
+}
+
+.footer-links a {
+  display: block;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: var(--spacing-sm);
+  transition:
+    transform var(--duration-slow) var(--ease-spring),
+    color var(--duration-normal) var(--transition-smooth);
+  font-weight: 700;
+}
+
+.footer-links a:hover {
+  color: var(--sand-deep);
+  transform: translateX(6px);
+}
+
+.footer-divider {
+  height: 1px;
+  background: var(--border-glass);
+  margin-bottom: var(--spacing-md);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.social-links {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.social-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--transition-smooth);
+}
+
+.social-links a:hover {
+  color: var(--accent-primary);
+}
+
+/* ===== Login Page ===== */
+.login-page main {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 120px 1.25rem 4rem;
+}
+
+.login-card {
+  width: min(100%, 480px);
+  padding: 3rem 2.5rem 2.5rem;
+  border-radius: var(--radius);
+  background-color: rgba(245, 233, 217, 0.55);
+  background-image: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition:
+    transform var(--duration-slow) var(--ease-spring),
+    opacity var(--duration-normal) var(--transition-smooth);
+}
+
+.login-card.is-success {
+  transform: scale(0.97);
+  opacity: 0.6;
+}
+
+.login-card h1 {
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 1px;
+  background: var(--gradient-aurora);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.login-lead {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.6;
+  margin-top: -0.5rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.login-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.input-glass {
+  display: block;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(16px) saturate(115%);
+  -webkit-backdrop-filter: blur(16px) saturate(115%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  transition:
+    transform var(--duration-slow) var(--ease-spring),
+    background var(--duration-normal) var(--transition-smooth),
+    box-shadow var(--duration-normal) var(--transition-smooth);
+}
+
+.input-glass:focus-within {
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 5px rgba(172, 119, 79, 0.28);
+}
+
+.input-glass input {
+  width: 100%;
+  height: 54px;
+  padding: 0 1.4rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+}
+
+.input-glass input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.input-glass.has-error {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 0 0 4px rgba(156, 74, 47, 0.45);
+}
+
+.login-error {
+  min-height: 1.3em;
+  color: var(--clay);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding-left: 0.5rem;
+}
+
+.login-submit {
+  width: 100%;
+  height: 58px;
+}
+
+.login-alt {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.login-alt a {
+  color: var(--accent-primary);
+  text-underline-offset: 3px;
+}
+
+.login-alt a:hover {
+  color: var(--accent-secondary);
+}
+
+.btn-glass:disabled {
+  opacity: 0.6;
+  cursor: progress;
+  transform: none;
+}
+
+/* ===== Log out confirmation dialog ===== */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(55, 37, 27, 0.35);
+  backdrop-filter: blur(12px) saturate(115%);
+  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--duration-normal) var(--transition-smooth),
+    visibility 0s linear var(--duration-normal);
+}
+
+.confirm-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity var(--duration-normal) var(--transition-smooth),
+    visibility 0s;
+}
+
+.confirm-card {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 2.25rem 1.75rem 1.75rem;
+  border-radius: var(--radius);
+  background-color: rgba(245, 233, 217, 0.8);
+  background-image: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(28px) scale(0.9);
+  transition:
+    transform var(--duration-slow) var(--ease-spring),
+    opacity var(--duration-normal) var(--transition-smooth);
+}
+
+.confirm-overlay.open .confirm-card {
+  opacity: 1;
+  transform: none;
+}
+
+.confirm-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.2) 30%,
+    rgba(172, 119, 79, 0.1) 70%,
+    rgba(172, 119, 79, 0.5) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.confirm-card h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.confirm-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.confirm-actions .btn {
+  flex: 1;
+  height: 52px;
+  padding-inline: 0.75rem;
+}
+
+/* "Yes, log out" uses the same clay as the Log out link in the island */
+.btn-danger {
+  background: var(--clay);
+  color: var(--sand-5);
+  border: none;
+  box-shadow: 0 10px 28px rgba(110, 70, 40, 0.3);
+}
+
+.btn-danger:hover {
+  background: color-mix(in srgb, var(--clay), #000 14%);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 38px rgba(156, 74, 47, 0.4);
+}
+
+@media (max-width: 480px) {
+  .confirm-actions {
+    flex-direction: column-reverse;
+  }
+}
+
+/* ----- Login page: floating glass orbs behind the card ----- */
+.login-page main {
+  position: relative;
+  z-index: 1;
+}
+
+.login-orbs {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.login-orbs span {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 0 50px rgba(255, 255, 255, 0.25),
+    0 40px 90px rgba(110, 70, 40, 0.3);
+  animation: orbFloat 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.login-orbs span:nth-child(1) {
+  width: clamp(240px, 34vmax, 460px);
+  left: 7%;
+  top: 12%;
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.55), transparent 38%),
+    linear-gradient(145deg, var(--sand-2), var(--sand-1) 55%, var(--sand-deep));
+}
+
+.login-orbs span:nth-child(2) {
+  width: clamp(200px, 28vmax, 380px);
+  right: 8%;
+  bottom: 9%;
+  animation-duration: 32s;
+  animation-delay: -9s;
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.5), transparent 38%),
+    linear-gradient(145deg, var(--sand-3), var(--sand-2) 50%, var(--sand-1));
+}
+
+.login-orbs span:nth-child(3) {
+  width: clamp(90px, 12vmax, 170px);
+  right: 24%;
+  top: 11%;
+  animation-duration: 22s;
+  animation-delay: -4s;
+  background:
+    radial-gradient(circle at 34% 28%, #fff, transparent 36%),
+    linear-gradient(145deg, var(--sand-5), var(--sand-4) 45%, var(--sand-3));
+}
+
+.login-orbs span:nth-child(4) {
+  width: clamp(70px, 9vmax, 130px);
+  left: 24%;
+  bottom: 12%;
+  animation-duration: 28s;
+  animation-delay: -14s;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.8), transparent 36%),
+    linear-gradient(145deg, var(--sand-4), var(--sand-2));
+}
+
+.login-orbs span:nth-child(5) {
+  width: clamp(100px, 13vmax, 190px);
+  left: 44%;
+  bottom: 3%;
+  animation-duration: 30s;
+  animation-delay: -18s;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.7), transparent 36%),
+    linear-gradient(145deg, var(--sand-3), var(--sand-2) 45%, var(--sand-1));
+}
+
+@keyframes orbFloat {
+  from {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(2.5vmax, -3.5vmax, 0) rotate(10deg);
+  }
+}
+
+/* ----- Login page: the card's contents rise in one after another ----- */
+.login-card .intro-tag {
+  align-self: flex-start;
+  margin-bottom: 0;
+}
+
+.login-card > * {
+  animation: loginRise var(--duration-slow) var(--ease-spring) backwards;
+}
+
+.login-card > :nth-child(1) {
+  animation-delay: 150ms;
+}
+.login-card > :nth-child(2) {
+  animation-delay: 240ms;
+}
+.login-card > :nth-child(3) {
+  animation-delay: 330ms;
+}
+.login-card > :nth-child(4) {
+  animation-delay: 420ms;
+}
+.login-card > :nth-child(5) {
+  animation-delay: 510ms;
+}
+
+@keyframes loginRise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.login-page .input-glass input {
+  height: 58px;
+}
+
+/* ===== Mobile Responsiveness ===== */
+@media (max-width: 1024px) {
+  .intro-section {
+    grid-template-columns: 1fr;
+    padding-top: 160px;
+  }
+
+  .intro-visual {
+    height: 350px;
+  }
+
+  .studio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+  }
+
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+
+  .intro-section {
+    padding-top: 120px;
+  }
+
+  .intro-section::before {
+    width: 600px;
+    height: 600px;
+    top: -300px;
+    right: -300px;
+  }
+
+  .intro-visual {
+    height: 300px;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .login-card {
+    padding: 2.25rem 1.5rem 1.75rem;
+  }
+}
+
+/* ===== Scroll Reveal Animation ===== */
+/* Starts when the element enters the screen (script adds .visible).
+   Fill mode "backwards" means it hands control back afterwards, so hover
+   motion on cards keeps working. */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fade-in-up {
+  opacity: 0;
+}
+
+.fade-in-up.visible {
+  opacity: 1;
+  animation: fadeInUp var(--duration-slow) var(--ease-spring) backwards;
+}
+
+/* Staggered animations */
+.fade-in-up:nth-child(1) {
+  animation-delay: 0ms;
+}
+.fade-in-up:nth-child(2) {
+  animation-delay: 100ms;
+}
+.fade-in-up:nth-child(3) {
+  animation-delay: 200ms;
+}
+.fade-in-up:nth-child(4) {
+  animation-delay: 300ms;
+}
+.fade-in-up:nth-child(5) {
+  animation-delay: 400ms;
+}
+.fade-in-up:nth-child(6) {
+  animation-delay: 500ms;
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== Autofill =====
+   Chrome and Safari paint autofilled inputs light blue. This keeps them sand. */
+.input-glass input:-webkit-autofill,
+.input-glass input:-webkit-autofill:hover,
+.input-glass input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  caret-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0 100px var(--sand-5) inset;
+  box-shadow: 0 0 0 100px var(--sand-5) inset;
+  transition: background-color 9999s ease-out 0s;
+}
+/* ===== Coming Soon page (reuses the login card + orbs) ===== */
+.soon-page main {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 120px 1.25rem 4rem;
+}
+
+.soon-card {
+  text-align: left;
+}
+
+.soon-card .login-lead {
+  font-size: 1.1rem;
+  margin-top: 0;
+}
+
+.soon-card .login-lead i {
+  font-size: 1.4rem;
+  vertical-align: middle;
+  color: var(--sand-deep);
+}
+
+.soon-card .btn {
+  text-decoration: none;
+}
+
+/* ===== Legal pages (Privacy, Terms, Cookies) ===== */
+.legal-page main {
+  place-items: start center;
+}
+
+.legal-card {
+  width: min(100%, 780px);
+  gap: 1rem;
+}
+
+.legal-card h1 {
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+}
+
+.legal-meta {
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: -0.5rem;
+}
+
+.legal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.legal-body h2 {
+  font-size: 1.35rem;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+  margin-top: 0.8rem;
+}
+
+.legal-body p,
+.legal-body li {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.75;
+}
+
+.legal-body ul {
+  padding-left: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.legal-body strong {
+  color: var(--text-primary);
+}
+
+.legal-body a,
+.legal-nav a {
+  color: var(--accent-primary);
+  text-underline-offset: 3px;
+}
+
+.legal-body a:hover,
+.legal-nav a:hover {
+  color: var(--accent-secondary);
+}
+
+.legal-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border-glass);
+  font-size: 0.9rem;
+  font-weight: 700;
+}

@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Login is required: visitors who aren't logged in go to the login page
+      // before anything is shown. "acpStudioUser" must match STORAGE_KEY in script.js.
+      try {
+        if (!localStorage.getItem("acpStudioUser"))
+          location.replace("login.html");
+      } catch (e) {
+        location.replace("login.html");
+      }
+    </script>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="Assests/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>ACP-Studio</title>
+  </head>
+  <body>
+    <!-- Dynamic Island Navigation -->
+    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
+      <div class="island-status">
+        <span class="island-section"><span id="islandSection">Home</span></span>
+        <span class="island-name" id="islandTime">ACP Studio</span>
+      </div>
+      <div class="island-nav" id="islandNav">
+        <a href="#home">Home</a>
+        <a href="#projects">C++ Projects</a>
+        <a href="#studio">YouTube Studio</a>
+        <a href="#contact">Contact</a>
+        <a href="login.html" id="authLink">Log in</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Intro Section -->
+      <section id="home" class="intro-section container">
+        <div class="intro-content">
+          <div class="intro-tag fade-in-up">
+            C++ Developer & Technical Creator
+          </div>
+          <h1 class="intro-heading fade-in-up">ZEYAD ADEL</h1>
+          <p class="intro-subheading fade-in-up">
+            Crafting elegant solutions in C++ and low-level systems. Building
+            architecture that scales. Creating content that educates and
+            inspires the next generation of Youth.
+          </p>
+          <div class="intro-cta fade-in-up">
+            <a href="#projects">
+              <button class="btn btn-primary">View My Work</button>
+            </a>
+          </div>
+        </div>
+
+        <div class="intro-visual">
+          <div class="visual-card fade-in-up">
+            <div class="card-header">
+              <h3>What's next!</h3>
+            </div>
+            <hr class="card-divider" />
+            <img src="Imag.jpg" alt="What's next" decoding="async" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects Section -->
+      <section id="projects" class="projects-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title fade-in-up">Systems & Code Showcase</h2>
+            <p class="section-subtitle fade-in-up">
+              A curated collection of projects, demonstrating clean design,
+              performance optimization, and systems-level thinking.
+            </p>
+          </div>
+
+          <div class="projects-grid">
+            <div class="project-card fade-in-up">
+              <div class="project-tag">Validation</div>
+              <h3 class="project-title">Login App</h3>
+              <p class="project-description">
+                A C++ project that validates user names. It checks that the
+                input is not empty, contains only letters and spaces.
+              </p>
+              <div class="project-footer">
+                
+                <a
+                  href="https://github.com/ACP-Studio/Username-Valedation"
+                  class="project-link"
+                  target="_blank"
+                  >Github <i class="bx bxl-github"></i
+                ></a>
+                <a
+                  href="coming-soon.html"
+                  class="youtube-project-link"
+                >
+                  Youtube <i class="bx bxl-youtube"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="project-card fade-in-up">
+              <div class="project-tag">Validation</div>
+              <h3 class="project-title">Password app</h3>
+              <p class="project-description">
+                A friendly C++ project that demonstrates password validation.
+                 The program checks if a password meets basic security rules (length, uppercase, lowercase, digit, special character, no spaces)
+              </p>
+              <div class="project-footer">
+                <!-- <div class="project-tech">
+                  <span class="tech-badge">C++17</span>
+                  <span class="tech-badge">Lock-Free</span>
+                </div> -->
+                <a
+                  href="https://github.com/ACP-Studio/Password-Validation"
+                  class="project-link"
+                  target="_blank"
+                  >Github <i class="bx bxl-github"></i
+                ></a>
+                <a
+                  href="coming-soon.html"
+                  class="youtube-project-link"
+                >
+                  Youtube <i class="bx bxl-youtube"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="project-card fade-in-up">
+              <div class="project-top">
+                <div class="project-tag">Network</div>
+                <span class="status-badge">Under development</span>
+              </div>
+              <h3 class="project-title">Nerwork Analyzer app</h3>
+              <p class="project-description">
+                A lightweight C++ network analyzer for Windows and Linux that tests latency, scans your network, and tracks your devices, with a CLI only
+              </p>
+              <div class="project-footer">
+                <a
+                  href="https://github.com/ACP-Studio/Net-analyzer-app"
+                  class="project-link"
+                  target="_blank"
+                  >Github <i class="bx bxl-github"></i
+                ></a>
+                <a
+                  href="coming-soon.html"
+                  class="youtube-project-link"
+                >
+                  Youtube <i class="bx bxl-youtube"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="project-card fade-in-up">
+              <div class="project-tag">Mathematics</div>
+              <h3 class="project-title">Advanced Calculator</h3>
+              <p class="project-description">
+                  C++ Calculator contain complex calculations and contain exponential functions with matrix site and more features                </p>
+              <div class="project-footer">
+                <div class="project-notice" role="status">
+                  <i class="bx bx-wrench"></i>
+                  Still in production, not finished yet
+                </div>
+              </div>
+            </div>
+
+
+            <div class="project-card fade-in-up">
+              <div class="project-tag">commercial</div>
+              <h3 class="project-title">Computer store</h3>
+              <p class="project-description">
+                  An object-oriented C++ computer parts store for the command line, with a shopping basket, compatibility checks and receipts.              </p>
+              <div class="project-footer">
+                <!-- <div class="project-tech">
+                  <span class="tech-badge">C++17</span>
+                  <span class="tech-badge">Lock-Free</span>
+                </div> -->
+                <a
+                  href="https://github.com/ACP-Studio/Computer-Store"
+                  class="project-link"
+                  target="_blank"
+                  >Github <i class="bx bxl-github"></i
+                ></a>
+                <a
+                  href="coming-soon.html"
+                  class="youtube-project-link"
+                >
+                  Youtube <i class="bx bxl-youtube"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- YouTube Studio Section -->
+      <section id="studio" class="studio-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title fade-in-up">YouTube Studio</h2>
+            <p class="section-subtitle fade-in-up">
+              Creating in-depth technical content about C++ architecture,
+              systems programming, and software design principles.
+            </p>
+          </div>
+
+          <div class="studio-grid">
+            <div class="studio-featured fade-in-up">
+              <div class="studio-thumbnail">
+                <img src="Imag.jpg" alt="Latest video" loading="lazy" decoding="async" />
+              </div>
+              <div class="studio-info">
+                <h3>Building a Lock-Free Queue</h3>
+                <p>
+                  A deep dive into synchronization primitives, compare-and-swap
+                  operations, and practical patterns for concurrent data
+                  structures. Watch as we build production-grade infrastructure
+                  from first principles.
+                </p>
+              </div>
+              <a href="coming-soon.html">
+                <button class="btn btn-primary" style="width: 100%">
+                  Watch on YouTube
+                </button>
+              </a>
+            </div>
+
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-md);
+              "
+            >
+              <div class="studio-featured fade-in-up">
+                <div class="studio-info">
+                  <h3>Channel Stats</h3>
+                </div>
+                <div class="studio-stats">
+                  <div class="stat-box">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Subscribers</div>
+                  </div>
+                  <div class="stat-box">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Views</div>
+                  </div>
+                  <div class="stat-box">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Videos</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="studio-featured fade-in-up">
+                <div class="studio-info">
+                  <h3>Recent Focus</h3>
+                  <p style="margin: 0">
+                    C++ standards evolution, systems design patterns, and modern
+                    concurrency techniques.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="footer-name">
+              <h5>Zeyad Adel</h5>
+            </div>
+            <h3>
+              " Building great code takes time...
+              <i class="bx bxs-time" style="color: var(--sand-deep)"></i> "
+            </h3>
+          </div>
+          <div class="footer-links">
+            <h4>Navigate</h4>
+            <a href="#home">Home</a>
+            <a href="#projects">Projects</a>
+            <a href="https://www.youtube.com/@ACP-Studios">YouTube</a>
+          </div>
+          <div class="footer-links">
+            <h4>Connect</h4>
+            <a href="https://github.com/ACP-Studio/ACP-Studio">Github</a>
+            <a href="mailto:za8398866@gmail.com">Email</a>
+            <a href="https://www.instagram.com/zeyad_adel_omar/">Instagram</a>
+          </div>
+        </div>
+        <div class="footer-divider"></div>
+        <div class="footer-bottom">
+          <p>
+            &copy; 2026 Zeyad Adel. Architected with pure intelligence | "All
+            Rights Reserved".
+          </p>
+          <div class="social-links">
+            <a href="privacy.html">Privacy policy</a>
+            <a href="terms.html">Terms &amp; Conditions</a>
+            <a href="cookies.html">Cookies</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

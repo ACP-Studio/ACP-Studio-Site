@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="Assests/logo.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Log in · ACP-Studio</title>
+  </head>
+  <body class="login-page">
+    <!-- Dynamic Island Navigation -->
+    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
+      <div class="island-status">
+        <span class="island-section"><span id="islandSection">Log in</span></span>
+        <span class="island-name" id="islandTime">Zeyad Adel</span>
+      </div>
+      <div class="island-nav" id="islandNav">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#projects">C++ Projects</a>
+        <a href="index.html#studio">YouTube Studio</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" id="authLink" aria-current="page">Log in</a>
+      </div>
+    </nav>
+
+    <!-- Decorative glass orbs (the card blurs them) -->
+    <div class="login-orbs" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <main>
+      <section class="login-card fade-in-up" id="loginCard">
+        <div class="intro-tag">Welcome to ACP-Studio</div>
+        <h1>Log in</h1>
+        <p class="login-lead">Enter your email to continue. No password needed.</p>
+
+        <form class="login-form" id="loginForm" novalidate>
+          <div>
+            <label class="login-label" for="loginEmail">Email address</label>
+            <div class="input-glass" id="loginField">
+              <input
+                type="email"
+                id="loginEmail"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                inputmode="email"
+                autocapitalize="off"
+                spellcheck="false"
+                required
+                aria-describedby="loginError"
+              />
+            </div>
+            <p class="login-error" id="loginError" role="alert"></p>
+          </div>
+          <button type="submit" class="btn btn-primary login-submit" id="loginSubmit">
+            Log in
+          </button>
+        </form>
+
+        <p class="login-alt" id="loginContinue" hidden>
+          <a href="index.html">Continue to the site</a>
+        </p>
+      </section>
+    </main>
+
+    
+        
+          <div class="social-links">
+            <a href="privacy.html">Privacy policy</a>
+            <a href="terms.html">Terms &amp; Conditions</a>
+            <a href="cookies.html" target="_blank">Cookies</a>
+          </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

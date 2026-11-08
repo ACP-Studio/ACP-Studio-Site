@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      try {
+        if (!localStorage.getItem("acpStudioUser"))
+          location.replace("login.html");
+      } catch (e) {
+        location.replace("login.html");
+      }
+    </script>
+    <link rel="icon" type="image/png" href="Assests/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Cookies · ACP-Studio</title>
+  </head>
+  <body class="soon-page legal-page">
+    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
+      <div class="island-status">
+        <span class="island-section"><span id="islandSection">Cookies</span></span>
+        <span class="island-name" id="islandTime">ACP Studio</span>
+      </div>
+      <div class="island-nav" id="islandNav">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#projects">C++ Projects</a>
+        <a href="index.html#studio">YouTube Studio</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" id="authLink">Log in</a>
+      </div>
+    </nav>
+
+    <div class="login-orbs" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <main>
+      <article class="login-card legal-card fade-in-up">
+        <div class="intro-tag">ACP-Studio</div>
+        <h1>Cookies</h1>
+        <p class="legal-meta">Last updated: November 8, 2026</p>
+
+        <div class="legal-body">
+          <h2>1. What this page covers</h2>
+          <p>
+            Cookies and similar technologies are small pieces of data a
+            website saves in your browser. This page explains what ACP-Studio
+            saves on your device.
+          </p>
+
+          <h2>2. What we save</h2>
+          <p>
+            We do not set any tracking, advertising or analytics cookies. The
+            site saves one item in your browser's local storage:
+          </p>
+          <ul>
+            <li>
+              <strong>acpStudioUser</strong>: your email address and the time
+              you logged in. It keeps you logged in, so you do not have to
+              type your email on every page. The site cannot work without it,
+              because login is required.
+            </li>
+          </ul>
+          <p>
+            This item stays on your device until you log out or clear your
+            browser data.
+          </p>
+
+          <h2>3. Services that load with the page</h2>
+          <p>
+            Some files come from other companies. When your browser requests
+            them, those companies can see your IP address and may use their
+            own cookies or logs:
+          </p>
+          <ul>
+            <li>Google Fonts (the page fonts)</li>
+            <li>unpkg (the icons)</li>
+            <li>
+              Supabase (the database that stores your email when you log in)
+            </li>
+          </ul>
+          <p>
+            We do not control these services. Please read their own policies
+            for details.
+          </p>
+
+          <h2>4. How to remove or block it</h2>
+          <ul>
+            <li>Use the Log out link in the menu at the top. It deletes the saved item.</li>
+            <li>
+              Or clear the site data in your browser settings. You will then
+              have to log in again to use the site.
+            </li>
+            <li>
+              If you block site data completely, you will not be able to log
+              in.
+            </li>
+          </ul>
+
+          <h2>5. Changes</h2>
+          <p>
+            If we add analytics or anything else that saves data on your
+            device, we will update this page first.
+          </p>
+
+          <h2>6. Contact</h2>
+          <p>
+            Questions:
+            <a href="mailto:za8398866@gmail.com">za8398866@gmail.com</a>.
+            More about how we use your email is in the
+            <a href="privacy.html">Privacy Policy</a>.
+          </p>
+        </div>
+
+        <div class="legal-nav">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+          <a href="index.html">Back to the site</a>
+        </div>
+      </article>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

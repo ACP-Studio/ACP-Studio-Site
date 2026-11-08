@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Same rule as index.html: visitors who aren't logged in go to the login page.
+      try {
+        if (!localStorage.getItem("acpStudioUser"))
+          location.replace("login.html");
+      } catch (e) {
+        location.replace("login.html");
+      }
+    </script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="Assests/logo.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Coming Soon · ACP-Studio</title>
+  </head>
+  <body class="soon-page">
+    <!-- Dynamic Island Navigation -->
+    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
+      <div class="island-status">
+        <span class="island-section"><span id="islandSection">Coming Soon</span></span>
+        <span class="island-name" id="islandTime">ACP Studio</span>
+      </div>
+      <div class="island-nav" id="islandNav">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#projects">C++ Projects</a>
+        <a href="index.html#studio">YouTube Studio</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" id="authLink">Log in</a>
+      </div>
+    </nav>
+
+    <!-- Decorative glass orbs (the card blurs them) -->
+    <div class="login-orbs" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <main>
+      <section class="login-card soon-card fade-in-up">
+        <div class="intro-tag">ACP-Studio</div>
+        <h1>Coming Soon</h1>
+        <p class="login-lead">
+          <i class="bx bxl-youtube"></i> It will be available soon.
+        </p>
+        <a href="index.html#studio" class="btn btn-primary login-submit">
+          Back to the site
+        </a>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
