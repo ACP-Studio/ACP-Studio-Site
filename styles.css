@@ -88,17 +88,17 @@
   /* Glass tokens (light glass: white tint, warm brown shadows) */
   --glass-fill: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.55) 0%,
-    rgba(255, 255, 255, 0.22) 45%,
-    rgba(255, 255, 255, 0.38) 100%
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.1) 45%,
+    rgba(255, 255, 255, 0.2) 100%
   );
   --glass-fill-hover: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(255, 255, 255, 0.32) 45%,
-    rgba(255, 255, 255, 0.52) 100%
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.18) 45%,
+    rgba(255, 255, 255, 0.32) 100%
   );
-  --glass-blur: blur(24px) saturate(115%);
+  --glass-blur: blur(40px) saturate(130%);
   --glass-shadow:
     0 20px 50px rgba(110, 70, 40, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.85),
     inset 0 -1px 0 rgba(172, 119, 79, 0.2);
@@ -375,15 +375,15 @@ body::after {
   grid-template-rows: 52px 0fr;
   border-radius: var(--radius);
   overflow: hidden;
-  background-color: rgba(245, 233, 217, 0.55);
+  background-color: rgba(245, 233, 217, 0.3);
   background-image: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 255, 255, 0.12) 50%,
-    rgba(255, 255, 255, 0.25) 100%
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.15) 100%
   );
-  backdrop-filter: blur(28px) saturate(115%);
-  -webkit-backdrop-filter: blur(28px) saturate(115%);
+  backdrop-filter: blur(44px) saturate(130%);
+  -webkit-backdrop-filter: blur(44px) saturate(130%);
   box-shadow:
     0 12px 40px rgba(110, 70, 40, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.85),
@@ -402,7 +402,7 @@ body::after {
   padding: 0 12px;
   grid-template-rows: 52px 1fr;
   border-radius: var(--radius);
-  background-color: rgba(245, 233, 217, 0.78);
+  background-color: rgba(245, 233, 217, 0.55);
   box-shadow:
     0 24px 70px rgba(110, 70, 40, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
@@ -1133,7 +1133,7 @@ body::after {
 }
 
 .stat-box {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.22);
   padding: var(--spacing-md) var(--spacing-xs);
   border-radius: var(--radius);
   text-align: center;
@@ -1163,11 +1163,11 @@ footer {
   margin-top: var(--spacing-xl);
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.4),
-    rgba(255, 255, 255, 0.18)
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.08)
   );
-  backdrop-filter: blur(24px) saturate(115%);
-  -webkit-backdrop-filter: blur(24px) saturate(115%);
+  backdrop-filter: blur(40px) saturate(130%);
+  -webkit-backdrop-filter: blur(40px) saturate(130%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
@@ -1275,7 +1275,7 @@ footer {
   width: min(100%, 480px);
   padding: 3rem 2.5rem 2.5rem;
   border-radius: var(--radius);
-  background-color: rgba(245, 233, 217, 0.55);
+  background-color: rgba(245, 233, 217, 0.28);
   background-image: var(--glass-fill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -1332,9 +1332,9 @@ footer {
 .input-glass {
   display: block;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(16px) saturate(115%);
-  -webkit-backdrop-filter: blur(16px) saturate(115%);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(28px) saturate(130%);
+  -webkit-backdrop-filter: blur(28px) saturate(130%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
   transition:
     transform var(--duration-slow) var(--ease-spring),
@@ -1344,7 +1344,7 @@ footer {
 
 .input-glass:focus-within {
   transform: scale(1.02);
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.55);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     0 0 0 5px rgba(172, 119, 79, 0.28);
@@ -1418,8 +1418,8 @@ footer {
   place-items: center;
   padding: 1.25rem;
   background: rgba(55, 37, 27, 0.35);
-  backdrop-filter: blur(12px) saturate(115%);
-  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  backdrop-filter: blur(20px) saturate(125%);
+  -webkit-backdrop-filter: blur(20px) saturate(125%);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1442,7 +1442,7 @@ footer {
   width: min(100%, 420px);
   padding: 2.25rem 1.75rem 1.75rem;
   border-radius: var(--radius);
-  background-color: rgba(245, 233, 217, 0.8);
+  background-color: rgba(245, 233, 217, 0.6);
   background-image: var(--glass-fill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -1690,7 +1690,7 @@ footer {
   :root {
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
-    --glass-blur: blur(14px) saturate(115%);
+    --glass-blur: blur(24px) saturate(125%);
   }
 
   .container {
