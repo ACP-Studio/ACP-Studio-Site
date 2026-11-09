@@ -1,23 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-access="public">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      try {
-        if (!localStorage.getItem("acpStudioUser"))
-          location.replace("login.html");
-      } catch (e) {
-        location.replace("login.html");
-      }
-    </script>
+    <meta name="theme-color" content="#e3c6a6" />
+    <script src="boot.js"></script>
+    <link rel="preload" href="fonts/cascadia-code-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" href="Assests/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="styles.css" />
     <title>Privacy Policy · ACP-Studio</title>
   </head>
@@ -107,20 +97,23 @@
           <ul>
             <li>
               <strong>In our database.</strong> Your email is saved with our
-              database provider, Supabase.
+              database provider, Supabase, which may keep it on servers
+              outside your country.
             </li>
             <li>
               <strong>In your browser.</strong> A small item called
-              "acpStudioUser" is saved in your browser's local storage. Logging
-              out removes it. See our Cookies page for details.
+              "acpStudioUser" is saved in your browser's local storage. It
+              expires after 30 days, and logging out removes it sooner. See our
+              Cookies page for details.
             </li>
           </ul>
 
           <h2>5. Other services the site uses</h2>
           <p>
-            To load, the site fetches fonts from Google Fonts and icons from
-            unpkg. Those services can see your IP address when your browser
-            asks for those files. Links to GitHub and YouTube take you to
+            The site's fonts and icons come from the site's own files, so no
+            other company can see your visit while you browse. The only outside
+            service the site contacts is our database provider, Supabase, at
+            the moment you log in. Links to GitHub and YouTube take you to
             other websites with their own privacy policies, which we do not
             control.
           </p>

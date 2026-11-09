@@ -15,6 +15,16 @@
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Anton: free look-alike of Impact. Hosted here (no Google Fonts). The browser
+   only downloads it on devices that do not already have Impact. */
+@font-face {
+  font-family: "Anton";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/anton-latin-400-normal.woff2") format("woff2");
+}
+
 /* =========================================================
    ACP-Studio — Glass theme
    Warm Sand palette (from the reference image):
@@ -51,7 +61,7 @@
   --bg-tertiary: var(--sand-3);
   --text-primary: var(--brown-800);
   --text-secondary: #5b4130;
-  --text-tertiary: #6e5444;
+  --text-tertiary: #644a3a;
   --accent-primary: var(--sand-deep);
   --accent-secondary: #4a2e1c;
   --accent-warm: var(--sand-1);
@@ -180,6 +190,7 @@ body {
   letter-spacing: 0;
   overflow-x: hidden;
   min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
 }
 
@@ -257,15 +268,6 @@ body::after {
     );
 }
 
-@keyframes drift {
-  from {
-    transform: translate3d(-3%, -2%, 0) scale(1);
-  }
-  to {
-    transform: translate3d(3%, 3%, 0) scale(1.08);
-  }
-}
-
 /* Smooth cross-fade when moving between pages (Chrome, Edge, Safari) */
 @view-transition {
   navigation: auto;
@@ -273,7 +275,7 @@ body::after {
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 700ms;
+  animation-duration: 250ms;
   animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
@@ -416,7 +418,7 @@ body::after {
   font-size: 1.35rem;
   font-weight: 700;
   white-space: nowrap;
-  font-family: "impact";
+  font-family: var(--font-display);
 }
 
 /* Closed: the name of the section you are reading. Open: it blurs away while the name fades in. */
@@ -489,25 +491,6 @@ body::after {
 /* Login page before logging in: the island shows only the logo */
 .dynamic-island.is-locked .island-nav {
   display: none;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    box-shadow:
-      0 0 12px var(--accent-primary),
-      0 0 0 0 rgba(172, 119, 79, 0.5);
-  }
-  50% {
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 1;
-    box-shadow:
-      0 0 12px var(--accent-primary),
-      0 0 0 12px rgba(172, 119, 79, 0);
-  }
 }
 
 /* Link grid, 3 rows: [Home | C++ Projects] [YouTube Studio | Contact] [Log in / Log out].
@@ -631,6 +614,7 @@ body::after {
 /* ===== Hero / Intro Section ===== */
 .intro-section {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-xl);
@@ -692,7 +676,6 @@ body::after {
   line-height: 1.1;
   margin-bottom: var(--spacing-md);
   letter-spacing: 1px;
-  font-family: "impact";
   /* palette gradient text (replaces the old flat gold) */
   background: var(--gradient-aurora);
   -webkit-background-clip: text;
@@ -874,7 +857,6 @@ body::after {
   padding: var(--spacing-lg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  cursor: pointer;
   transition: var(--transition-surface);
   display: flex;
   flex-direction: column;
@@ -1044,8 +1026,13 @@ body::after {
   transition: var(--transition-surface);
 }
 
-.bxl-youtube,
-.bxl-github {
+/* Icons (icons.svg). They take the text colour and scale with the font size. */
+.icon {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+  fill: currentColor;
+  vertical-align: -0.2em;
   margin: 2px;
 }
 
@@ -1207,8 +1194,8 @@ footer {
   font-size: 1.3rem;
 }
 
-.footer-brand h3 i {
-  color: var(--text-secondary);
+.footer-brand h3 .icon {
+  color: var(--sand-deep);
 }
 
 .footer-brand p {
@@ -1278,6 +1265,7 @@ footer {
 /* ===== Login Page ===== */
 .login-page main {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 120px 1.25rem 4rem;
@@ -1300,7 +1288,8 @@ footer {
     opacity var(--duration-normal) var(--transition-smooth);
 }
 
-.login-card.is-success {
+.login-card.is-success,
+.login-card.is-success.visible {
   transform: scale(0.97);
   opacity: 0.6;
 }
@@ -1658,6 +1647,9 @@ footer {
 .login-card > :nth-child(5) {
   animation-delay: 510ms;
 }
+.login-card > :nth-child(6) {
+  animation-delay: 600ms;
+}
 
 @keyframes loginRise {
   from {
@@ -1686,7 +1678,7 @@ footer {
   }
 
   .studio-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .projects-grid {
@@ -1698,6 +1690,7 @@ footer {
   :root {
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
+    --glass-blur: blur(14px) saturate(115%);
   }
 
   .container {
@@ -1756,7 +1749,7 @@ footer {
   }
 }
 
-.fade-in-up {
+.js .fade-in-up {
   opacity: 0;
 }
 
@@ -1814,6 +1807,7 @@ footer {
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 120px 1.25rem 4rem;
@@ -1828,8 +1822,9 @@ footer {
   margin-top: 0;
 }
 
-.soon-card .login-lead i {
-  font-size: 1.4rem;
+.soon-card .login-lead .icon {
+  width: 1.4rem;
+  height: 1.4rem;
   vertical-align: middle;
   color: var(--sand-deep);
 }
@@ -1910,4 +1905,68 @@ footer {
   border-top: 1px solid var(--border-glass);
   font-size: 0.9rem;
   font-weight: 700;
+}
+/* ===== Added in the audit ===== */
+
+/* Right-hand column of the YouTube section (was an inline style) */
+.studio-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-width: 0;
+}
+
+/* Full-width button (was an inline style on a button inside a link) */
+.btn-block {
+  width: 100%;
+}
+
+.stat-label {
+  overflow-wrap: anywhere;
+}
+
+/* Very narrow phones: three stat boxes in a row are wider than the screen */
+@media (max-width: 400px) {
+  .studio-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* "By continuing you agree..." note on the login card */
+.login-legal {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.7;
+  color: var(--text-tertiary);
+}
+
+.login-legal a {
+  color: var(--accent-primary);
+  text-underline-offset: 3px;
+}
+
+.login-legal a:hover {
+  color: var(--accent-secondary);
+}
+
+/* ===== Speed on phones and tablets =====
+   Blurring what is behind a card is the most expensive thing this site does,
+   and over a smooth sand background it looks almost the same as no blur.
+   So on touch screens only the small island and the login card keep it, and
+   the floating orbs stand still (they made the login card re-blur every frame). */
+@media (max-width: 768px), (hover: none) {
+  .intro-tag,
+  .visual-card,
+  .project-card,
+  .studio-featured,
+  footer {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .login-orbs span {
+    animation: none;
+    will-change: auto;
+  }
 }

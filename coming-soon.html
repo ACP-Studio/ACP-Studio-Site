@@ -1,21 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-access="members">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      // Same rule as index.html: visitors who aren't logged in go to the login page.
-      try {
-        if (!localStorage.getItem("acpStudioUser"))
-          location.replace("login.html");
-      } catch (e) {
-        location.replace("login.html");
-      }
-    </script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
+    <meta name="theme-color" content="#e3c6a6" />
+    <script src="boot.js"></script>
+    <link rel="preload" href="fonts/cascadia-code-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" href="Assests/logo.png" />
     <link rel="stylesheet" href="styles.css" />
     <title>Coming Soon · ACP-Studio</title>
@@ -46,7 +37,7 @@
         <div class="intro-tag">ACP-Studio</div>
         <h1>Coming Soon</h1>
         <p class="login-lead">
-          <i class="bx bxl-youtube"></i> It will be available soon.
+          <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg> It will be available soon.
         </p>
         <a href="index.html#studio" class="btn btn-primary login-submit">
           Back to the site

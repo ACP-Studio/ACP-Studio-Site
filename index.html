@@ -1,30 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-access="members">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      // Login is required: visitors who aren't logged in go to the login page
-      // before anything is shown. "acpStudioUser" must match STORAGE_KEY in script.js.
-      try {
-        if (!localStorage.getItem("acpStudioUser"))
-          location.replace("login.html");
-      } catch (e) {
-        location.replace("login.html");
-      }
-    </script>
-    <link rel="preconnect" href="https://unpkg.com" crossorigin />
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
+    <meta name="description" content="ACP-Studio: C++ projects and YouTube content by Zeyad Adel." />
+    <meta name="theme-color" content="#e3c6a6" />
+    <script src="boot.js"></script>
+    <link rel="preload" href="fonts/cascadia-code-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" href="Assests/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="styles.css" />
     <title>ACP-Studio</title>
   </head>
@@ -50,7 +34,7 @@
       <section id="home" class="intro-section container">
         <div class="intro-content">
           <div class="intro-tag fade-in-up">
-            C++ Developer & Technical Creator
+            C++ Developer &amp; Technical Creator
           </div>
           <h1 class="intro-heading fade-in-up">ZEYAD ADEL</h1>
           <p class="intro-subheading fade-in-up">
@@ -59,9 +43,7 @@
             inspires the next generation of Youth.
           </p>
           <div class="intro-cta fade-in-up">
-            <a href="#projects">
-              <button class="btn btn-primary">View My Work</button>
-            </a>
+            <a href="#projects" class="btn btn-primary">View My Work</a>
           </div>
         </div>
 
@@ -71,7 +53,7 @@
               <h3>What's next!</h3>
             </div>
             <hr class="card-divider" />
-            <img src="Imag.jpg" alt="What's next" decoding="async" />
+            <img src="Assests/Artboard 1.png" alt="What's next" decoding="async" fetchpriority="high" />
           </div>
         </div>
       </section>
@@ -80,7 +62,7 @@
       <section id="projects" class="projects-section">
         <div class="container">
           <div class="section-header">
-            <h2 class="section-title fade-in-up">Systems & Code Showcase</h2>
+            <h2 class="section-title fade-in-up">Systems &amp; Code Showcase</h2>
             <p class="section-subtitle fade-in-up">
               A curated collection of projects, demonstrating clean design,
               performance optimization, and systems-level thinking.
@@ -100,14 +82,13 @@
                 <a
                   href="https://github.com/ACP-Studio/Username-Valedation"
                   class="project-link"
-                  target="_blank"
-                  >Github <i class="bx bxl-github"></i
-                ></a>
+                  target="_blank" rel="noopener noreferrer"
+                  >Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
                 <a
                   href="coming-soon.html"
                   class="youtube-project-link"
                 >
-                  Youtube <i class="bx bxl-youtube"></i>
+                  Youtube <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg>
                 </a>
               </div>
             </div>
@@ -127,14 +108,13 @@
                 <a
                   href="https://github.com/ACP-Studio/Password-Validation"
                   class="project-link"
-                  target="_blank"
-                  >Github <i class="bx bxl-github"></i
-                ></a>
+                  target="_blank" rel="noopener noreferrer"
+                  >Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
                 <a
                   href="coming-soon.html"
                   class="youtube-project-link"
                 >
-                  Youtube <i class="bx bxl-youtube"></i>
+                  Youtube <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg>
                 </a>
               </div>
             </div>
@@ -144,7 +124,7 @@
                 <div class="project-tag">Network</div>
                 <span class="status-badge">Under development</span>
               </div>
-              <h3 class="project-title">Nerwork Analyzer app</h3>
+              <h3 class="project-title">Network Analyzer app</h3>
               <p class="project-description">
                 A lightweight C++ network analyzer for Windows and Linux that tests latency, scans your network, and tracks your devices, with a CLI only
               </p>
@@ -152,14 +132,13 @@
                 <a
                   href="https://github.com/ACP-Studio/Net-analyzer-app"
                   class="project-link"
-                  target="_blank"
-                  >Github <i class="bx bxl-github"></i
-                ></a>
+                  target="_blank" rel="noopener noreferrer"
+                  >Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
                 <a
                   href="coming-soon.html"
                   class="youtube-project-link"
                 >
-                  Youtube <i class="bx bxl-youtube"></i>
+                  Youtube <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg>
                 </a>
               </div>
             </div>
@@ -171,7 +150,7 @@
                   C++ Calculator contain complex calculations and contain exponential functions with matrix site and more features                </p>
               <div class="project-footer">
                 <div class="project-notice" role="status">
-                  <i class="bx bx-wrench"></i>
+                  <svg class="icon" aria-hidden="true"><use href="icons.svg#wrench"></use></svg>
                   Still in production, not finished yet
                 </div>
               </div>
@@ -191,14 +170,13 @@
                 <a
                   href="https://github.com/ACP-Studio/Computer-Store"
                   class="project-link"
-                  target="_blank"
-                  >Github <i class="bx bxl-github"></i
-                ></a>
+                  target="_blank" rel="noopener noreferrer"
+                  >Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
                 <a
                   href="coming-soon.html"
                   class="youtube-project-link"
                 >
-                  Youtube <i class="bx bxl-youtube"></i>
+                  Youtube <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg>
                 </a>
               </div>
             </div>
@@ -220,7 +198,7 @@
           <div class="studio-grid">
             <div class="studio-featured fade-in-up">
               <div class="studio-thumbnail">
-                <img src="Imag.jpg" alt="Latest video" loading="lazy" decoding="async" />
+                <img src="Assests/Artboard 1.png" alt="Latest video" loading="lazy" decoding="async" />
               </div>
               <div class="studio-info">
                 <h3>Building a Lock-Free Queue</h3>
@@ -231,20 +209,12 @@
                   from first principles.
                 </p>
               </div>
-              <a href="coming-soon.html">
-                <button class="btn btn-primary" style="width: 100%">
-                  Watch on YouTube
-                </button>
+              <a href="coming-soon.html" class="btn btn-primary btn-block">
+                Watch on YouTube
               </a>
             </div>
 
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                gap: var(--spacing-md);
-              "
-            >
+            <div class="studio-side">
               <div class="studio-featured fade-in-up">
                 <div class="studio-info">
                   <h3>Channel Stats</h3>
@@ -268,7 +238,7 @@
               <div class="studio-featured fade-in-up">
                 <div class="studio-info">
                   <h3>Recent Focus</h3>
-                  <p style="margin: 0">
+                  <p>
                     C++ standards evolution, systems design patterns, and modern
                     concurrency techniques.
                   </p>
@@ -290,7 +260,7 @@
             </div>
             <h3>
               " Building great code takes time...
-              <i class="bx bxs-time" style="color: var(--sand-deep)"></i> "
+              <svg class="icon" aria-hidden="true"><use href="icons.svg#time"></use></svg> "
             </h3>
           </div>
           <div class="footer-links">

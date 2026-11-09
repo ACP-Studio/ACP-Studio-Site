@@ -1,23 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-access="public">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      try {
-        if (!localStorage.getItem("acpStudioUser"))
-          location.replace("login.html");
-      } catch (e) {
-        location.replace("login.html");
-      }
-    </script>
+    <meta name="theme-color" content="#e3c6a6" />
+    <script src="boot.js"></script>
+    <link rel="preload" href="fonts/cascadia-code-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" href="Assests/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="styles.css" />
     <title>Cookies · ACP-Studio</title>
   </head>
@@ -68,26 +58,18 @@
             </li>
           </ul>
           <p>
-            This item stays on your device until you log out or clear your
-            browser data.
+            This item stays on your device for up to 30 days, or until you log
+            out or clear your browser data, whichever comes first.
           </p>
 
-          <h2>3. Services that load with the page</h2>
+          <h2>3. Other services</h2>
           <p>
-            Some files come from other companies. When your browser requests
-            them, those companies can see your IP address and may use their
-            own cookies or logs:
-          </p>
-          <ul>
-            <li>Google Fonts (the page fonts)</li>
-            <li>unpkg (the icons)</li>
-            <li>
-              Supabase (the database that stores your email when you log in)
-            </li>
-          </ul>
-          <p>
-            We do not control these services. Please read their own policies
-            for details.
+            The fonts and icons are served from this site, so browsing does not
+            contact any other company. One outside service is used when you
+            log in: Supabase, the database that stores your email. When your
+            browser contacts it, Supabase can see your IP address and may keep
+            its own logs. We do not control that service. Please read its own
+            policy for details.
           </p>
 
           <h2>4. How to remove or block it</h2>

@@ -2,28 +2,26 @@
 // true = visitors must log in before they can see the site (login.html comes first).
 // Set to false to make the login optional again.
 const REQUIRE_LOGIN = true;
-const STORAGE_KEY = "acpStudioUser";
+// Must match the key in boot.js (boot.js is loaded first and provides it)
+const STORAGE_KEY = window.ACP_STORAGE_KEY || "acpStudioUser";
 
 const prefersReducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)",
 ).matches;
 
 // ===== Email-only sign-in (stored in this browser only) =====
+// Reading goes through boot.js (acpReadUser), which rejects forged, malformed
+// and expired (older than 30 days) values. This is a convenience gate, not
+// real security: see the note at the top of boot.js.
 const auth = {
   get() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY));
-    } catch {
-      return null;
-    }
+    return typeof window.acpReadUser === "function" ? window.acpReadUser() : null;
   },
   set(email) {
     try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ email, signedInAt: Date.now() }),
-      );
-      return true;
+      const value = JSON.stringify({ email, signedInAt: Date.now() });
+      localStorage.setItem(STORAGE_KEY, value);
+      return localStorage.getItem(STORAGE_KEY) === value;
     } catch {
       return false;
     }
@@ -37,24 +35,40 @@ const auth = {
   },
 };
 
+// "public" pages (login and the legal pages) can be read without logging in,
+// so people can read the Privacy Policy before they give their email.
+const isPublicPage = document.documentElement.dataset.access === "public";
 const isLoginPage = document.body.classList.contains("login-page");
 const isSoonPage = document.body.classList.contains("soon-page");
+const needsLogin = REQUIRE_LOGIN && !isPublicPage;
 
-if (REQUIRE_LOGIN && !isLoginPage && !auth.get()) {
+// Remove a saved login that is invalid or expired so it can't linger
+if (!auth.get()) auth.clear();
+
+if (needsLogin && !auth.get()) {
   window.location.replace("login.html");
 }
 
 // Back button after logging out: a cached copy of the page must not show
 window.addEventListener("pageshow", (e) => {
-  if (e.persisted && REQUIRE_LOGIN && !isLoginPage && !auth.get()) {
+  if (e.persisted && needsLogin && !auth.get()) {
     window.location.replace("login.html");
   }
+});
+
+// Logging out (or in) in another tab updates this tab too
+window.addEventListener("storage", (e) => {
+  if (e.key !== null && e.key !== STORAGE_KEY) return;
+  if (needsLogin && !auth.get()) {
+    window.location.replace("login.html");
+    return;
+  }
+  renderAuthLink();
 });
 
 // ===== Dynamic Island =====
 const dynamicIsland = document.getElementById("dynamicIsland");
 const islandNav = document.getElementById("islandNav");
-const islandTime = document.getElementById("islandTime");
 
 // Before logging in, the island on the login page stays closed (logo only)
 const islandLocked = REQUIRE_LOGIN && isLoginPage && !auth.get();
@@ -129,7 +143,14 @@ document.addEventListener("click", (e) => {
 // On touch screens, tapping the island itself (not a link) opens or closes it.
 dynamicIsland.addEventListener("click", (e) => {
   e.stopPropagation();
-  if (!canHover && !e.target.closest("a")) setExpanded(!isExpanded);
+  if (canHover) return;
+  if (!e.target.closest("a")) {
+    setExpanded(!isExpanded);
+  } else {
+    // touch screens: close the island after a link is tapped, so it does not
+    // stay open on top of the section you just scrolled to
+    setExpanded(false);
+  }
 });
 
 // ===== Island label: shows the section you are reading =====
@@ -194,19 +215,26 @@ const observerOptions = {
   rootMargin: "0px 0px -50px 0px",
 };
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("visible");
-      observer.unobserve(entry.target);
-    }
-  });
-}, observerOptions);
+if ("IntersectionObserver" in window) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
 
-// Observe all fade-in elements
-document.querySelectorAll(".fade-in-up").forEach((el) => {
-  observer.observe(el);
-});
+  // Observe all fade-in elements
+  document.querySelectorAll(".fade-in-up").forEach((el) => {
+    observer.observe(el);
+  });
+} else {
+  // very old browsers: just show everything
+  document.querySelectorAll(".fade-in-up").forEach((el) => {
+    el.classList.add("visible");
+  });
+}
 
 // ===== Smooth scroll behavior for navigation =====
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
@@ -319,9 +347,7 @@ function performLogout() {
   auth.clear();
   renderAuthLink();
   setExpanded(false);
-  if (REQUIRE_LOGIN || isLoginPage) {
-    window.location.href = "login.html";
-  }
+  window.location.href = "login.html";
 }
 
 if (authLink) {
@@ -337,14 +363,19 @@ if (authLink) {
 }
 
 // ===== Supabase (stores the emails) =====
-// Fill in these two values from your Supabase project (Project Settings > API Keys).
 // Use the PUBLISHABLE key only. Never put the secret / service_role key in this file,
 // because everything in script.js can be read by anyone who visits the site.
 const SUPABASE_URL = "https://ppvncqbwfkubqmuehsfl.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_gasiCPaJ54I4G-2phqTlXg_5JL65S1j";
 
-// Must match your table and column names exactly (capital letters count).
-// The table's ID column (uuid) fills itself in, so only the email is sent.
+// The email is saved by a database function (created by supabase-hardening.sql)
+// so the public key never needs direct access to the table, and nobody can use
+// the site to find out whether a given email is already in the list.
+const SAVE_FUNCTION = "register_email";
+
+// Until that SQL has been run, fall back to inserting straight into the table
+// (the old behaviour). Set this to false once the SQL is live and tested.
+const FALLBACK_TO_DIRECT_INSERT = true;
 const EMAILS_TABLE = "Emails";
 const EMAILS_COLUMN = "Email";
 
@@ -355,18 +386,48 @@ const supabaseIsConfigured =
   !SUPABASE_URL.includes("YOUR_PROJECT_ID") &&
   !SUPABASE_PUBLISHABLE_KEY.endsWith("...");
 
-const supabaseClient =
-  window.supabase && supabaseIsConfigured
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
-    : null;
+// The email is sent with one plain request to Supabase's REST address, so no
+// library has to be downloaded. The publishable key goes in the "apikey" header.
+async function postToSupabase(path, body, signal, extraHeaders) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_PUBLISHABLE_KEY,
+      "Content-Type": "application/json",
+      ...extraHeaders,
+    },
+    body: JSON.stringify(body),
+    credentials: "omit",
+    cache: "no-store",
+    signal,
+  });
+  if (res.ok) return null;
+
+  const error = { status: res.status, code: "", message: `HTTP ${res.status}` };
+  try {
+    const info = await res.json();
+    error.code = info.code || "";
+    error.message = info.message || error.message;
+  } catch {
+    /* the answer was not JSON */
+  }
+  return error;
+}
+
+function isMissingFunction(error) {
+  return (
+    error &&
+    (error.code === "PGRST202" ||
+      error.code === "42883" ||
+      /could not find the function/i.test(error.message || ""))
+  );
+}
 
 // Sends the email to Supabase. Never throws: a database problem should not
 // block the visitor, so problems are only written to the browser console.
 async function saveEmailToSupabase(email) {
-  if (!supabaseClient) {
-    console.warn(
-      "Supabase is not set up yet (add your URL and key in script.js), so this email was not saved online.",
-    );
+  if (!supabaseIsConfigured) {
+    console.warn("Supabase is not set up, so this email was not saved online.");
     return;
   }
 
@@ -374,20 +435,50 @@ async function saveEmailToSupabase(email) {
   const timer = setTimeout(() => controller.abort(), SAVE_TIMEOUT_MS);
 
   try {
-    const { error } = await supabaseClient
-      .from(EMAILS_TABLE)
-      .insert({ [EMAILS_COLUMN]: email })
-      .abortSignal(controller.signal);
+    let error = await postToSupabase(
+      `rpc/${SAVE_FUNCTION}`,
+      { p_email: email },
+      controller.signal,
+    );
 
-    // Code 23505 means this email is already in the table, which is fine.
-    if (error && error.code !== "23505") {
-      console.error("Supabase error:", error.message);
+    if (error && FALLBACK_TO_DIRECT_INSERT && isMissingFunction(error)) {
+      error = await postToSupabase(
+        EMAILS_TABLE,
+        { [EMAILS_COLUMN]: email },
+        controller.signal,
+        { Prefer: "return=minimal" },
+      );
+      // Code 23505 means this email is already in the table, which is fine.
+      if (error && error.code === "23505") error = null;
     }
+
+    if (error) console.error("Supabase error:", error.message);
   } catch (err) {
     console.error("Could not reach Supabase:", err);
   } finally {
     clearTimeout(timer);
   }
+}
+
+// ===== Email check (same rules the database enforces) =====
+// Lower-case only: the address is lower-cased before it is checked.
+const EMAIL_LOCAL = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/;
+const EMAIL_DOMAIN =
+  /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
+const EMAIL_TLD = /\.(?:[a-z]{2,}|xn--[a-z0-9-]{2,})$/;
+
+function isValidEmail(email) {
+  if (typeof email !== "string" || email.length < 6 || email.length > 254) {
+    return false;
+  }
+  const at = email.lastIndexOf("@");
+  if (at < 1 || at > 64) return false; // local part must be 1 to 64 characters
+  const local = email.slice(0, at);
+  const domain = email.slice(at + 1);
+  if (local.startsWith(".") || local.endsWith(".") || local.includes("..")) {
+    return false;
+  }
+  return EMAIL_LOCAL.test(local) && EMAIL_DOMAIN.test(domain) && EMAIL_TLD.test(domain);
 }
 
 // ===== Login form (email only) =====
@@ -399,7 +490,6 @@ if (loginForm) {
   const emailField = document.getElementById("loginField");
   const errorEl = document.getElementById("loginError");
   const submitBtn = document.getElementById("loginSubmit");
-  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
   const saved = auth.get();
   if (saved && saved.email) {
@@ -432,7 +522,7 @@ if (loginForm) {
       showError("Enter your email address.");
       return;
     }
-    if (!EMAIL_PATTERN.test(email)) {
+    if (!isValidEmail(email)) {
       showError("That email doesn't look right. Check it and try again.");
       return;
     }
