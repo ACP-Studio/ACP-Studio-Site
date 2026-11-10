@@ -56,6 +56,14 @@ window.addEventListener("pageshow", (e) => {
   }
 });
 
+// A tab left open past the 30 days (or a login removed meanwhile): check again
+// when the person comes back to the tab
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && needsLogin && !auth.get()) {
+    window.location.replace("login.html");
+  }
+});
+
 // Logging out (or in) in another tab updates this tab too
 window.addEventListener("storage", (e) => {
   if (e.key !== null && e.key !== STORAGE_KEY) return;
@@ -276,7 +284,7 @@ function renderAuthLink() {
 // Asks "Are you sure?" in a glass dialog. Resolves true only if the visitor
 // presses the Yes button; Cancel, Escape and clicking outside all resolve false.
 function confirmLogout(email) {
-  if (document.querySelector(".confirm-overlay")) return Promise.resolve(false);
+  if (document.querySelector(".confirm-overlay.open")) return Promise.resolve(false);
 
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
@@ -379,6 +387,16 @@ const FALLBACK_TO_DIRECT_INSERT = true;
 const EMAILS_TABLE = "Emails";
 const EMAILS_COLUMN = "Email";
 
+// ===== CAPTCHA (Cloudflare Turnstile) =====
+// Leave the key empty to keep the CAPTCHA OFF. To turn it on, paste your
+// Turnstile SITE key here (it is public, like the Supabase key) and follow
+// CAPTCHA-SETUP.md. NEVER put the Turnstile SECRET key in this file.
+const TURNSTILE_SITE_KEY = "";
+// With the CAPTCHA on, emails are saved by the register-email Edge Function,
+// which checks the CAPTCHA on the server before saving anything.
+const REGISTER_ENDPOINT = `${SUPABASE_URL}/functions/v1/register-email`;
+const captchaEnabled = TURNSTILE_SITE_KEY !== "";
+
 // If Supabase doesn't answer in this time, the visitor continues anyway.
 const SAVE_TIMEOUT_MS = 8000;
 
@@ -425,10 +443,15 @@ function isMissingFunction(error) {
 
 // Sends the email to Supabase. Never throws: a database problem should not
 // block the visitor, so problems are only written to the browser console.
-async function saveEmailToSupabase(email) {
+// Returns "ok", "unavailable" (problem on our side: the visitor still gets in),
+// or, with the CAPTCHA on only, "captcha_failed" / "invalid_email" (the visitor
+// is NOT logged in).
+async function saveEmailToSupabase(email, captchaToken) {
+  if (captchaEnabled) return registerWithCaptcha(email, captchaToken);
+
   if (!supabaseIsConfigured) {
     console.warn("Supabase is not set up, so this email was not saved online.");
-    return;
+    return "unavailable";
   }
 
   const controller = new AbortController();
@@ -452,9 +475,47 @@ async function saveEmailToSupabase(email) {
       if (error && error.code === "23505") error = null;
     }
 
-    if (error) console.error("Supabase error:", error.message);
+    if (error) {
+      console.error("Supabase error:", error.message);
+      return "unavailable";
+    }
+    return "ok";
   } catch (err) {
     console.error("Could not reach Supabase:", err);
+    return "unavailable";
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// CAPTCHA mode: the Edge Function checks the CAPTCHA, then saves the email.
+async function registerWithCaptcha(email, token) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), SAVE_TIMEOUT_MS);
+  try {
+    const res = await fetch(REGISTER_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, token }),
+      credentials: "omit",
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    if (res.ok) return "ok";
+
+    let code = "";
+    try {
+      code = (await res.json()).error || "";
+    } catch {
+      /* the answer was not JSON */
+    }
+    if (code === "captcha_failed") return "captcha_failed";
+    if (code === "invalid_email") return "invalid_email";
+    console.error("Could not save the email:", res.status, code);
+    return "unavailable";
+  } catch (err) {
+    console.error("Could not reach the register function:", err);
+    return "unavailable";
   } finally {
     clearTimeout(timer);
   }
@@ -481,6 +542,18 @@ function isValidEmail(email) {
   return EMAIL_LOCAL.test(local) && EMAIL_DOMAIN.test(domain) && EMAIL_TLD.test(domain);
 }
 
+// Some browsers (private mode, strict settings) refuse to store anything
+function storageWorks() {
+  try {
+    const probe = STORAGE_KEY + "_test";
+    localStorage.setItem(probe, "1");
+    localStorage.removeItem(probe);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // ===== Login form (email only) =====
 const loginForm = document.getElementById("loginForm");
 
@@ -490,6 +563,9 @@ if (loginForm) {
   const emailField = document.getElementById("loginField");
   const errorEl = document.getElementById("loginError");
   const submitBtn = document.getElementById("loginSubmit");
+  const captchaBox = document.getElementById("captchaBox");
+  const BLOCKED_MESSAGE =
+    "Your browser is blocking site data, so we can't keep you logged in. Allow site data and try again.";
 
   const saved = auth.get();
   if (saved && saved.email) {
@@ -514,8 +590,68 @@ if (loginForm) {
 
   emailInput.addEventListener("input", clearError);
 
+  // ----- CAPTCHA (only when TURNSTILE_SITE_KEY is set) -----
+  let captchaToken = "";
+  let captchaWidgetId = null;
+
+  function loadTurnstile() {
+    return new Promise((resolve, reject) => {
+      if (window.turnstile) return resolve();
+      const script = document.createElement("script");
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.onload = () =>
+        window.turnstile && window.turnstile.ready
+          ? window.turnstile.ready(resolve)
+          : resolve();
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  function resetCaptcha() {
+    captchaToken = "";
+    if (captchaWidgetId !== null && window.turnstile) {
+      window.turnstile.reset(captchaWidgetId);
+    }
+    submitBtn.disabled = captchaEnabled;
+  }
+
+  if (captchaEnabled && captchaBox) {
+    captchaBox.hidden = false;
+    submitBtn.disabled = true; // switched on again when the CAPTCHA is solved
+    loadTurnstile()
+      .then(() => {
+        captchaWidgetId = window.turnstile.render(captchaBox, {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme: "light",
+          size: captchaBox.clientWidth < 300 ? "compact" : "normal",
+          callback: (token) => {
+            captchaToken = token;
+            submitBtn.disabled = false;
+          },
+          "expired-callback": () => {
+            captchaToken = "";
+            submitBtn.disabled = true;
+          },
+          "error-callback": () => {
+            captchaToken = "";
+            submitBtn.disabled = true;
+            showError("The security check could not run. Refresh the page and try again.");
+          },
+        });
+      })
+      .catch(() => {
+        showError("The security check could not load. Check your connection and refresh the page.");
+      });
+  }
+
+  // ----- sending the form -----
+  let submitting = false;
+
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (submitting) return;
     const email = emailInput.value.trim().toLowerCase();
 
     if (!email) {
@@ -526,23 +662,49 @@ if (loginForm) {
       showError("That email doesn't look right. Check it and try again.");
       return;
     }
-    if (!auth.set(email)) {
-      showError(
-        "Your browser is blocking site data, so we can't keep you logged in. Allow site data and try again.",
-      );
+    if (captchaEnabled && !captchaToken) {
+      showError("Please complete the security check first.");
+      return;
+    }
+    if (!storageWorks()) {
+      showError(BLOCKED_MESSAGE);
       return;
     }
 
     clearError();
+    submitting = true;
     submitBtn.disabled = true;
     submitBtn.textContent = "Logging in…";
 
-    await saveEmailToSupabase(email);
+    const result = await saveEmailToSupabase(email, captchaToken);
+
+    // With the CAPTCHA on, a failed check or a refused email means: not logged in
+    if (result === "captcha_failed" || result === "invalid_email") {
+      submitting = false;
+      submitBtn.textContent = "Log in";
+      resetCaptcha();
+      showError(
+        result === "captcha_failed"
+          ? "The security check failed. Please try again."
+          : "That email doesn't look right. Check it and try again.",
+      );
+      return;
+    }
+
+    // the login is only saved after every check passed
+    if (!auth.set(email)) {
+      submitting = false;
+      submitBtn.disabled = captchaEnabled;
+      submitBtn.textContent = "Log in";
+      resetCaptcha();
+      showError(BLOCKED_MESSAGE);
+      return;
+    }
 
     loginCard.classList.add("is-success");
     renderAuthLink();
     setTimeout(() => {
       window.location.href = "index.html";
-    }, prefersReducedMotion ? 0 : 700);
+    }, prefersReducedMotion ? 0 : 120);
   });
 }

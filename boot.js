@@ -19,6 +19,17 @@
 
   root.classList.add("js");
 
+  // Clickjacking: refuse to show inside another website's frame. GitHub Pages
+  // cannot send the X-Frame-Options header, so this is the next best thing.
+  if (window.top !== window.self) {
+    root.style.display = "none";
+    try {
+      window.top.location.href = window.location.href;
+    } catch (e) {
+      /* sandboxed frame: stay hidden */
+    }
+  }
+
   // Returns {email, signedInAt} for a valid, recent login, otherwise null.
   function readUser() {
     try {

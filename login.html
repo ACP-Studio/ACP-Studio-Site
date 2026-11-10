@@ -2,13 +2,14 @@
 <html lang="en" data-access="public">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; font-src 'self'; img-src 'self' data:; frame-src https://challenges.cloudflare.com; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#e3c6a6" />
     <script src="boot.js"></script>
     <link rel="preload" href="fonts/cascadia-code-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" href="Assests/logo.png" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="prefetch" href="index.html" />
     <title>Log in · ACP-Studio</title>
   </head>
   <body class="login-page">
@@ -57,6 +58,7 @@
             </div>
             <p class="login-error" id="loginError" role="alert"></p>
           </div>
+          <div class="captcha-box" id="captchaBox" hidden></div>
           <button type="submit" class="btn btn-primary login-submit" id="loginSubmit">
             Log in
           </button>
