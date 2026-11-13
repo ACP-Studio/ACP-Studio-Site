@@ -26,86 +26,85 @@
 }
 
 /* =========================================================
-   ACP-Studio — Glass theme
-   Warm Sand palette (from the reference image):
-     01 Rich Sand    #ac774f
-     02 Golden Sand  #d7a87a
-     03 Soft Beige   #e3c6a6
-     04 Light Sand   #ecd8bf
-     05 Ivory Sand   #f5e9d9
-   Text is a dark brown (#37251b) taken from the reference.
-   There are no blue, teal or purple colors anywhere in this file.
-   Glass: heavy blur, thin tinted edge, one shared corner radius.
+   ACP-Studio — Clear glass theme (macOS style) in Deep Forest green
+   Palette:
+     01 Night Forest  #071b18
+     02 Deep Pine     #123c35
+     03 Pine          #286451
+     04 Sage          #638b72
+     05 Mist          #b8c8a7
+     06 Cream         #f4ead8
+   Dark theme: the page is a deep green field, every surface on it is clear
+   glass (a faint cream tint, a hairline rim, backdrop blur where it is
+   visible). The only colors outside the palette are a soft coral for errors
+   and "Log out", and black for shadows.
    ========================================================= */
 
 /* ===== CSS Variables & Theme Foundation ===== */
 :root {
-  /* Warm Sand */
-  --sand-1: #ac774f; /* 01 Rich Sand */
-  --sand-2: #d7a87a; /* 02 Golden Sand */
-  --sand-3: #e3c6a6; /* 03 Soft Beige */
-  --sand-4: #ecd8bf; /* 04 Light Sand */
-  --sand-5: #f5e9d9; /* 05 Ivory Sand */
+  /* Deep Forest palette */
+  --c-950: #071b18; /* 01 Night Forest */
+  --c-900: #123c35; /* 02 Deep Pine */
+  --c-700: #286451; /* 03 Pine */
+  --c-500: #638b72; /* 04 Sage */
+  --c-300: #b8c8a7; /* 05 Mist */
+  --c-100: #f4ead8; /* 06 Cream */
 
-  /* Deeper tones of the same sand, for text and small accents
-     (the light sands alone are too pale to read on a sand background) */
-  --sand-deep: #7a4e2d;
-  --brown-800: #37251b;
-  --brown-900: #2b1b12;
   /* Used only for errors and "Log out" so they still read as warnings */
-  --clay: #9c4a2f;
+  --clay: #e29a82;
 
   /* Roles */
-  --bg-primary: var(--sand-5);
-  --bg-secondary: var(--sand-4);
-  --bg-tertiary: var(--sand-3);
-  --text-primary: var(--brown-800);
-  --text-secondary: #5b4130;
-  --text-tertiary: #644a3a;
-  --accent-primary: var(--sand-deep);
-  --accent-secondary: #4a2e1c;
-  --accent-warm: var(--sand-1);
-  --accent-subtle: var(--sand-2);
+  --bg-primary: var(--c-950);
+  --bg-secondary: var(--c-900);
+  --bg-tertiary: var(--c-700);
+  --text-primary: var(--c-100);
+  --text-secondary: var(--c-300);
+  --text-tertiary: #8da98f; /* between Sage and Mist, readable on dark glass */
+  --accent-primary: var(--c-300);
+  --accent-secondary: var(--c-100);
+  --accent-warm: var(--c-500);
+  --accent-subtle: var(--c-700);
 
-  color-scheme: light;
+  color-scheme: dark;
 
-  /* Signature gradient for headings (kept dark enough to read on sand) */
+  /* Signature gradient for headings: cream into mist into sage */
   --gradient-aurora: linear-gradient(
     110deg,
-    #4a2e1c 0%,
-    var(--sand-deep) 35%,
-    var(--sand-1) 72%,
-    #b98350 100%
+    var(--c-100) 0%,
+    var(--c-300) 55%,
+    var(--c-500) 100%
   );
-  /* Gradient for buttons: the sand palette from rich to soft */
+  /* Gradient for buttons: sage to mist to cream (dark text on top) */
   --gradient-button: linear-gradient(
     110deg,
-    var(--sand-1) 0%,
-    var(--sand-2) 50%,
-    var(--sand-3) 100%
+    var(--c-500) 0%,
+    var(--c-300) 50%,
+    var(--c-100) 100%
   );
 
-  /* Glass tokens (light glass: white tint, warm brown shadows) */
+  /* Glass tokens (clear glass: a faint cream tint over the green field) */
   --glass-fill: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.55) 0%,
-    rgba(255, 255, 255, 0.22) 45%,
-    rgba(255, 255, 255, 0.38) 100%
+    rgba(244, 234, 216, 0.2) 0%,
+    rgba(244, 234, 216, 0.06) 38%,
+    rgba(244, 234, 216, 0.13) 64%,
+    rgba(244, 234, 216, 0.03) 100%
   );
   --glass-fill-hover: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(255, 255, 255, 0.32) 45%,
-    rgba(255, 255, 255, 0.52) 100%
+    rgba(244, 234, 216, 0.27) 0%,
+    rgba(244, 234, 216, 0.1) 38%,
+    rgba(244, 234, 216, 0.18) 64%,
+    rgba(244, 234, 216, 0.05) 100%
   );
-  --glass-blur: blur(24px) saturate(115%);
+  --glass-blur: blur(40px) saturate(190%);
   --glass-shadow:
-    0 20px 50px rgba(110, 70, 40, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 rgba(172, 119, 79, 0.2);
+    0 20px 50px rgba(2, 12, 10, 0.4), inset 0 1px 0 rgba(244, 234, 216, 0.28),
+    inset 0 -1px 0 rgba(184, 200, 167, 0.1);
   --glass-shadow-hover:
-    0 26px 64px rgba(110, 70, 40, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(172, 119, 79, 0.3);
-  --border-glass: rgba(172, 119, 79, 0.35);
+    0 26px 64px rgba(2, 12, 10, 0.5), inset 0 1px 0 rgba(244, 234, 216, 0.4),
+    inset 0 -1px 0 rgba(184, 200, 167, 0.18);
+  --border-glass: rgba(184, 200, 167, 0.22);
 
   /* Shape */
   /* One corner radius for the whole site. Small items (tags, buttons) are
@@ -181,10 +180,10 @@ input {
 body {
   background: linear-gradient(
     155deg,
-    var(--sand-5) 0%,
-    var(--sand-4) 38%,
-    var(--sand-3) 78%,
-    #dfbf9d 100%
+    var(--c-950) 0%,
+    #0a2723 42%,
+    var(--c-900) 82%,
+    #0e3630 100%
   );
   color: var(--text-primary);
   font-family: var(--font-body);
@@ -198,7 +197,7 @@ body {
   position: relative;
 }
 
-/* Color fields behind everything: this is what the glass blurs.
+/* Color fields behind everything: this is what the glass shows through.
    Two layers drift in opposite directions. */
 body::before,
 body::after {
@@ -213,27 +212,27 @@ body::before {
   background:
     radial-gradient(
       42vmax 42vmax at 10% 14%,
-      rgba(215, 168, 122, 0.5),
+      rgba(40, 100, 81, 0.55),
       transparent 62%
     ),
     radial-gradient(
       36vmax 36vmax at 90% 22%,
-      rgba(172, 119, 79, 0.22),
+      rgba(99, 139, 114, 0.22),
       transparent 62%
     ),
     radial-gradient(
       46vmax 46vmax at 78% 90%,
-      rgba(172, 119, 79, 0.34),
+      rgba(40, 100, 81, 0.45),
       transparent 62%
     ),
     radial-gradient(
       40vmax 40vmax at 16% 86%,
-      rgba(215, 168, 122, 0.55),
+      rgba(99, 139, 114, 0.3),
       transparent 62%
     ),
     radial-gradient(
       38vmax 38vmax at 56% 54%,
-      rgba(227, 198, 166, 0.5),
+      rgba(18, 60, 53, 0.6),
       transparent 62%
     );
 }
@@ -242,42 +241,42 @@ body::after {
   background:
     radial-gradient(
       26vmax 26vmax at 50% 8%,
-      rgba(255, 255, 255, 0.5),
+      rgba(184, 200, 167, 0.14),
       transparent 60%
     ),
     radial-gradient(
       28vmax 28vmax at 6% 50%,
-      rgba(245, 233, 217, 0.55),
+      rgba(99, 139, 114, 0.18),
       transparent 60%
     ),
     radial-gradient(
       30vmax 30vmax at 96% 56%,
-      rgba(215, 168, 122, 0.3),
+      rgba(40, 100, 81, 0.3),
       transparent 60%
     ),
     radial-gradient(
       32vmax 32vmax at 46% 64%,
-      rgba(172, 119, 79, 0.14),
+      rgba(244, 234, 216, 0.04),
       transparent 60%
     ),
     radial-gradient(
       30vmax 30vmax at 84% 8%,
-      rgba(215, 168, 122, 0.32),
+      rgba(99, 139, 114, 0.2),
       transparent 60%
     ),
     radial-gradient(
       34vmax 34vmax at 4% 98%,
-      rgba(255, 255, 255, 0.35),
+      rgba(184, 200, 167, 0.1),
       transparent 60%
     );
 }
 
 ::selection {
-  background: rgba(172, 119, 79, 0.3);
+  background: rgba(99, 139, 114, 0.45);
 }
 
 :focus-visible {
-  outline: 2px solid var(--sand-deep);
+  outline: 2px solid var(--c-300);
   outline-offset: 3px;
 }
 
@@ -325,10 +324,10 @@ body::after {
   padding: 1px;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, var(--edge-strong, 0.9)) 0%,
-    rgba(255, 255, 255, 0.2) 30%,
-    rgba(172, 119, 79, 0.1) 70%,
-    rgba(172, 119, 79, var(--edge-mid, 0.5)) 100%
+    rgba(244, 234, 216, var(--edge-strong, 0.5)) 0%,
+    rgba(244, 234, 216, 0.08) 30%,
+    rgba(184, 200, 167, 0.04) 70%,
+    rgba(184, 200, 167, var(--edge-mid, 0.3)) 100%
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -350,8 +349,8 @@ body::after {
 .youtube-project-link:hover,
 .input-glass:focus-within,
 .btn-glass:hover {
-  --edge-strong: 1;
-  --edge-mid: 0.8;
+  --edge-strong: 0.85;
+  --edge-mid: 0.55;
 }
 
 /* ===== Dynamic Island Navigation (macOS-style) ===== */
@@ -368,19 +367,20 @@ body::after {
   grid-template-rows: 52px 0fr;
   border-radius: var(--radius);
   overflow: hidden;
-  background-color: rgba(245, 233, 217, 0.55);
+  background-color: rgba(18, 60, 53, 0.1);
   background-image: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 255, 255, 0.12) 50%,
-    rgba(255, 255, 255, 0.25) 100%
+    rgba(244, 234, 216, 0.2) 0%,
+    rgba(244, 234, 216, 0.05) 40%,
+    rgba(244, 234, 216, 0.12) 66%,
+    rgba(244, 234, 216, 0.03) 100%
   );
-  backdrop-filter: blur(28px) saturate(115%);
-  -webkit-backdrop-filter: blur(28px) saturate(115%);
+  backdrop-filter: blur(40px) saturate(190%);
+  -webkit-backdrop-filter: blur(40px) saturate(190%);
   box-shadow:
-    0 12px 40px rgba(110, 70, 40, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 rgba(172, 119, 79, 0.2);
+    0 12px 40px rgba(2, 12, 10, 0.35),
+    inset 0 1px 0 rgba(244, 234, 216, 0.26),
+    inset 0 -1px 0 rgba(184, 200, 167, 0.18);
   transition:
     width 1300ms var(--ease-spring),
     padding 1300ms var(--ease-spring),
@@ -395,11 +395,11 @@ body::after {
   padding: 0 12px;
   grid-template-rows: 52px 1fr;
   border-radius: var(--radius);
-  background-color: rgba(245, 233, 217, 0.78);
+  background-color: rgba(18, 60, 53, 0.18);
   box-shadow:
-    0 24px 70px rgba(110, 70, 40, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(172, 119, 79, 0.25);
+    0 24px 70px rgba(2, 12, 10, 0.48),
+    inset 0 1px 0 rgba(244, 234, 216, 0.28),
+    inset 0 -1px 0 rgba(184, 200, 167, 0.23);
 }
 
 .island-status {
@@ -565,18 +565,18 @@ body::after {
 .island-nav a:hover,
 .island-nav a[aria-current="page"] {
   color: var(--accent-secondary);
-  background: rgba(172, 119, 79, 0.16);
+  background: rgba(184, 200, 167, 0.14);
 }
 
 /* Log out (shown only while logged in): warm clay, stronger on hover */
 .island-nav a.is-logout {
   color: var(--clay);
-  background: rgba(156, 74, 47, 0.12);
+  background: rgba(226, 154, 130, 0.13);
 }
 
 .island-nav a.is-logout:hover {
-  color: #7d3520;
-  background: rgba(156, 74, 47, 0.24);
+  color: #f6c3b0;
+  background: rgba(226, 154, 130, 0.26);
 }
 
 /* ===== Mobile Responsiveness for Island ===== */
@@ -627,7 +627,7 @@ body::after {
   height: 800px;
   background: radial-gradient(
     circle,
-    rgba(172, 119, 79, 0.14) 0%,
+    rgba(184, 200, 167, 0.13) 0%,
     transparent 70%
   );
   border-radius: 50%;
@@ -712,15 +712,15 @@ body::after {
   background: var(--gradient-button);
   background-size: 220% 100%;
   background-position: 0% 50%;
-  color: var(--brown-900);
+  color: var(--c-950);
   border: none;
-  box-shadow: 0 10px 28px rgba(110, 70, 40, 0.3);
+  box-shadow: 0 10px 28px rgba(2, 12, 10, 0.48);
 }
 
 .btn-primary:hover {
   background-position: 100% 50%;
   transform: translateY(-2px);
-  box-shadow: 0 16px 38px rgba(172, 119, 79, 0.42);
+  box-shadow: 0 16px 38px rgba(184, 200, 167, 0.38);
 }
 
 .btn-primary {
@@ -792,7 +792,7 @@ body::after {
   width: 100%;
   height: 1px;
   border: 0;
-  background: rgba(172, 119, 79, 0.3);
+  background: rgba(184, 200, 167, 0.27);
   margin: 0;
 }
 
@@ -868,7 +868,7 @@ body::after {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.45),
+    rgba(244, 234, 216, 0.14),
     transparent
   );
   transition: left var(--duration-slow) var(--transition-smooth);
@@ -887,7 +887,7 @@ body::after {
 
 .project-tag {
   display: inline-flex;
-  background: rgba(172, 119, 79, 0.12);
+  background: rgba(184, 200, 167, 0.11);
   color: var(--accent-primary);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-pill);
@@ -919,7 +919,7 @@ body::after {
   gap: 6px;
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-pill);
-  background: rgba(215, 168, 122, 0.28);
+  background: rgba(99, 139, 114, 0.22);
   border: 1px solid var(--border-glass);
   color: var(--accent-secondary);
   font-size: 0.75rem;
@@ -935,7 +935,7 @@ body::after {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--clay);
+  background: var(--c-100);
   animation: status-pulse 1.8s ease-in-out infinite;
 }
 
@@ -967,7 +967,7 @@ body::after {
 }
 
 .project-card:hover .project-title {
-  color: var(--sand-deep);
+  color: var(--c-300);
 }
 
 .project-description {
@@ -994,7 +994,7 @@ body::after {
 }
 
 .tech-badge {
-  background: rgba(172, 119, 79, 0.12);
+  background: rgba(184, 200, 167, 0.11);
   color: var(--accent-secondary);
   padding: 2px 10px;
   border-radius: var(--radius-pill);
@@ -1011,7 +1011,7 @@ body::after {
   margin: 4px;
   padding: 4px 14px;
   text-decoration: none;
-  background: rgba(172, 119, 79, 0.12);
+  background: rgba(184, 200, 167, 0.11);
   border-radius: var(--radius-pill);
   font-size: 0.966rem;
   font-weight: bold;
@@ -1031,10 +1031,10 @@ body::after {
 
 .youtube-project-link:hover,
 .project-link:hover {
-  background: rgba(172, 119, 79, 0.22);
+  background: rgba(184, 200, 167, 0.2);
   color: var(--accent-secondary);
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 24px rgba(110, 70, 40, 0.22);
+  box-shadow: 0 12px 24px rgba(2, 12, 10, 0.35);
 }
 
 /* Sentence box shown instead of the buttons when a project doesn't exist yet.
@@ -1126,18 +1126,18 @@ body::after {
 }
 
 .stat-box {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(244, 234, 216, 0.12);
   padding: var(--spacing-md) var(--spacing-xs);
   border-radius: var(--radius);
   text-align: center;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 0 rgba(244, 234, 216, 0.24);
 }
 
 .stat-number {
   font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 700;
-  color: var(--sand-deep);
+  color: var(--c-300);
   margin-bottom: var(--spacing-xs);
 }
 
@@ -1156,10 +1156,10 @@ footer {
   margin-top: var(--spacing-xl);
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.4),
-    rgba(255, 255, 255, 0.18)
+    rgba(244, 234, 216, 0.12),
+    rgba(244, 234, 216, 0.05)
   );
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 0 rgba(244, 234, 216, 0.21);
 }
 
 .footer-content {
@@ -1186,7 +1186,7 @@ footer {
 }
 
 .footer-brand h3 .icon {
-  color: var(--sand-deep);
+  color: var(--c-300);
 }
 
 .footer-brand p {
@@ -1217,7 +1217,7 @@ footer {
 }
 
 .footer-links a:hover {
-  color: var(--sand-deep);
+  color: var(--c-300);
   transform: translateX(6px);
 }
 
@@ -1266,7 +1266,7 @@ footer {
   width: min(100%, 480px);
   padding: 3rem 2.5rem 2.5rem;
   border-radius: var(--radius);
-  background-color: rgba(245, 233, 217, 0.55);
+  background-color: rgba(18, 60, 53, 0.06);
   background-image: var(--glass-fill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -1323,10 +1323,10 @@ footer {
 .input-glass {
   display: block;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(16px) saturate(115%);
-  -webkit-backdrop-filter: blur(16px) saturate(115%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  background: rgba(244, 234, 216, 0.07);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(244, 234, 216, 0.22);
   transition:
     transform var(--duration-slow) var(--ease-spring),
     background var(--duration-normal) var(--transition-smooth),
@@ -1335,10 +1335,10 @@ footer {
 
 .input-glass:focus-within {
   transform: scale(1.02);
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(244, 234, 216, 0.12);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 0 0 5px rgba(172, 119, 79, 0.28);
+    inset 0 1px 0 rgba(244, 234, 216, 0.32),
+    0 0 0 5px rgba(184, 200, 167, 0.22);
 }
 
 .input-glass input {
@@ -1361,8 +1361,8 @@ footer {
 
 .input-glass.has-error {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    0 0 0 4px rgba(156, 74, 47, 0.45);
+    inset 0 1px 0 rgba(244, 234, 216, 0.22),
+    0 0 0 4px rgba(226, 154, 130, 0.5);
 }
 
 .login-error {
@@ -1408,9 +1408,9 @@ footer {
   display: grid;
   place-items: center;
   padding: 1.25rem;
-  background: rgba(55, 37, 27, 0.35);
-  backdrop-filter: blur(12px) saturate(115%);
-  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  background: rgba(2, 12, 10, 0.5);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1433,7 +1433,7 @@ footer {
   width: min(100%, 420px);
   padding: 2.25rem 1.75rem 1.75rem;
   border-radius: var(--radius);
-  background-color: rgba(245, 233, 217, 0.8);
+  background-color: rgba(18, 60, 53, 0.16);
   background-image: var(--glass-fill);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -1462,10 +1462,10 @@ footer {
   padding: 1px;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 255, 255, 0.2) 30%,
-    rgba(172, 119, 79, 0.1) 70%,
-    rgba(172, 119, 79, 0.5) 100%
+    rgba(244, 234, 216, 0.5) 0%,
+    rgba(244, 234, 216, 0.08) 30%,
+    rgba(184, 200, 167, 0.04) 70%,
+    rgba(184, 200, 167, 0.3) 100%
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -1508,15 +1508,15 @@ footer {
 /* "Yes, log out" uses the same clay as the Log out link in the island */
 .btn-danger {
   background: var(--clay);
-  color: var(--sand-5);
+  color: var(--c-950);
   border: none;
-  box-shadow: 0 10px 28px rgba(110, 70, 40, 0.3);
+  box-shadow: 0 10px 28px rgba(2, 12, 10, 0.48);
 }
 
 .btn-danger:hover {
   background: color-mix(in srgb, var(--clay), #000 14%);
   transform: translateY(-2px);
-  box-shadow: 0 16px 38px rgba(156, 74, 47, 0.4);
+  box-shadow: 0 16px 38px rgba(226, 154, 130, 0.44);
 }
 
 @media (max-width: 480px) {
@@ -1543,10 +1543,10 @@ footer {
   position: absolute;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(244, 234, 216, 0.28);
   box-shadow:
-    inset 0 0 50px rgba(255, 255, 255, 0.25),
-    0 40px 90px rgba(110, 70, 40, 0.3);
+    inset 0 0 50px rgba(244, 234, 216, 0.1),
+    0 40px 90px rgba(2, 12, 10, 0.5);
   animation: orbFloat 26s ease-in-out infinite alternate;
   will-change: transform;
 }
@@ -1556,8 +1556,8 @@ footer {
   left: 7%;
   top: 12%;
   background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.55), transparent 38%),
-    linear-gradient(145deg, var(--sand-2), var(--sand-1) 55%, var(--sand-deep));
+    radial-gradient(circle at 30% 26%, rgba(244, 234, 216, 0.4), transparent 38%),
+    linear-gradient(145deg, var(--c-500), var(--c-700) 55%, var(--c-900));
 }
 
 .login-orbs span:nth-child(2) {
@@ -1567,8 +1567,8 @@ footer {
   animation-duration: 32s;
   animation-delay: -9s;
   background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.5), transparent 38%),
-    linear-gradient(145deg, var(--sand-3), var(--sand-2) 50%, var(--sand-1));
+    radial-gradient(circle at 30% 26%, rgba(244, 234, 216, 0.4), transparent 38%),
+    linear-gradient(145deg, var(--c-300), var(--c-500) 50%, var(--c-700));
 }
 
 .login-orbs span:nth-child(3) {
@@ -1578,8 +1578,8 @@ footer {
   animation-duration: 22s;
   animation-delay: -4s;
   background:
-    radial-gradient(circle at 34% 28%, #fff, transparent 36%),
-    linear-gradient(145deg, var(--sand-5), var(--sand-4) 45%, var(--sand-3));
+    radial-gradient(circle at 34% 28%, rgba(244, 234, 216, 0.85), transparent 36%),
+    linear-gradient(145deg, var(--c-100), var(--c-300) 45%, var(--c-500));
 }
 
 .login-orbs span:nth-child(4) {
@@ -1589,8 +1589,8 @@ footer {
   animation-duration: 28s;
   animation-delay: -14s;
   background:
-    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.8), transparent 36%),
-    linear-gradient(145deg, var(--sand-4), var(--sand-2));
+    radial-gradient(circle at 34% 28%, rgba(244, 234, 216, 0.6), transparent 36%),
+    linear-gradient(145deg, var(--c-300), var(--c-700));
 }
 
 .login-orbs span:nth-child(5) {
@@ -1600,8 +1600,8 @@ footer {
   animation-duration: 30s;
   animation-delay: -18s;
   background:
-    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.7), transparent 36%),
-    linear-gradient(145deg, var(--sand-3), var(--sand-2) 45%, var(--sand-1));
+    radial-gradient(circle at 34% 28%, rgba(244, 234, 216, 0.5), transparent 36%),
+    linear-gradient(145deg, var(--c-500), var(--c-700) 45%, var(--c-900));
 }
 
 @keyframes orbFloat {
@@ -1681,7 +1681,7 @@ footer {
   :root {
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
-    --glass-blur: blur(14px) saturate(115%);
+    --glass-blur: blur(14px) saturate(160%);
   }
 
   .container {
@@ -1783,14 +1783,14 @@ footer {
 }
 
 /* ===== Autofill =====
-   Chrome and Safari paint autofilled inputs light blue. This keeps them sand. */
+   Chrome and Safari paint autofilled inputs light blue. This keeps them deep green. */
 .input-glass input:-webkit-autofill,
 .input-glass input:-webkit-autofill:hover,
 .input-glass input:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--text-primary);
   caret-color: var(--text-primary);
-  -webkit-box-shadow: 0 0 0 100px var(--sand-5) inset;
-  box-shadow: 0 0 0 100px var(--sand-5) inset;
+  -webkit-box-shadow: 0 0 0 100px var(--c-900) inset;
+  box-shadow: 0 0 0 100px var(--c-900) inset;
   transition: background-color 9999s ease-out 0s;
 }
 /* ===== Coming Soon page (reuses the login card + orbs) ===== */
@@ -1817,7 +1817,7 @@ footer {
   width: 1.4rem;
   height: 1.4rem;
   vertical-align: middle;
-  color: var(--sand-deep);
+  color: var(--c-300);
 }
 
 .soon-card .btn {
@@ -1944,7 +1944,7 @@ footer {
 /* ===== Speed on every screen size =====
    Blurring what is behind a card is the most expensive thing this site did.
    Measured on a 1920x1080 screen it made scrolling choppy (frames took 40 ms
-   instead of 16.7 ms), and over your smooth sand background the picture is
+   instead of 16.7 ms), and over the smooth green background the picture is
    almost the same without it. So the big cards, the small tags and the footer
    no longer blur live. The small menu island and the login card keep their
    frosted-glass blur, because that is where it is actually visible.
@@ -1973,4 +1973,10 @@ footer {
 
 .captcha-box[hidden] {
   display: none;
+}
+
+/* Long legal text sits over the bright login orbs: a slightly deeper glass
+   tint keeps the text readable while the card stays clear. */
+.legal-card {
+  background-color: rgba(7, 27, 24, 0.3);
 }
