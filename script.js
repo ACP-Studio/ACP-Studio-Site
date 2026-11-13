@@ -17,9 +17,15 @@ const auth = {
   get() {
     return typeof window.acpReadUser === "function" ? window.acpReadUser() : null;
   },
-  set(email) {
+  set(data) {
     try {
-      const value = JSON.stringify({ email, signedInAt: Date.now() });
+      const value = JSON.stringify({
+        email: data.email,
+        signedInAt: data.signedInAt || Date.now(),
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        expiresAt: data.expiresAt,
+      });
       localStorage.setItem(STORAGE_KEY, value);
       return localStorage.getItem(STORAGE_KEY) === value;
     } catch {
@@ -352,6 +358,10 @@ function confirmLogout(email) {
 }
 
 function performLogout() {
+  const user = auth.get();
+  if (user && user.accessToken) {
+    authFetch("logout", { token: user.accessToken }); // ends the session on the server too
+  }
   auth.clear();
   renderAuthLink();
   setExpanded(false);
@@ -370,156 +380,110 @@ if (authLink) {
   renderAuthLink();
 }
 
-// ===== Supabase (stores the emails) =====
-// Use the PUBLISHABLE key only. Never put the secret / service_role key in this file,
-// because everything in script.js can be read by anyone who visits the site.
+// ===== Supabase Auth: real login with an emailed code =====
+// Supabase checks the Turnstile CAPTCHA itself (Dashboard > Authentication >
+// Attack Protection), so it cannot be skipped. Use the PUBLISHABLE key only.
 const SUPABASE_URL = "https://ppvncqbwfkubqmuehsfl.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_gasiCPaJ54I4G-2phqTlXg_5JL65S1j";
-
-// The email is saved by a database function (created by supabase-hardening.sql)
-// so the public key never needs direct access to the table, and nobody can use
-// the site to find out whether a given email is already in the list.
-const SAVE_FUNCTION = "register_email";
-
-// Until that SQL has been run, fall back to inserting straight into the table
-// (the old behaviour). Set this to false once the SQL is live and tested.
-const FALLBACK_TO_DIRECT_INSERT = true;
-const EMAILS_TABLE = "Emails";
-const EMAILS_COLUMN = "Email";
-
-// ===== CAPTCHA (Cloudflare Turnstile) =====
-// Leave the key empty to keep the CAPTCHA OFF. To turn it on, paste your
-// Turnstile SITE key here (it is public, like the Supabase key) and follow
-// CAPTCHA-SETUP.md. NEVER put the Turnstile SECRET key in this file.
-const TURNSTILE_SITE_KEY = "0x4AAAAAAF_IHt-c_RQfEGZW";
-// With the CAPTCHA on, emails are saved by the register-email Edge Function,
-// which checks the CAPTCHA on the server before saving anything.
-const REGISTER_ENDPOINT = `${SUPABASE_URL}/functions/v1/register-email`;
+const TURNSTILE_SITE_KEY = "0x4AAAAAAF_IHt-c_RQfEGZW"; // public; the SECRET key lives only in the Supabase dashboard
 const captchaEnabled = TURNSTILE_SITE_KEY !== "";
+const REQUEST_TIMEOUT_MS = 10000;
 
-// If Supabase doesn't answer in this time, the visitor continues anyway.
-const SAVE_TIMEOUT_MS = 8000;
-
-const supabaseIsConfigured =
-  !SUPABASE_URL.includes("YOUR_PROJECT_ID") &&
-  !SUPABASE_PUBLISHABLE_KEY.endsWith("...");
-
-// The email is sent with one plain request to Supabase's REST address, so no
-// library has to be downloaded. The publishable key goes in the "apikey" header.
-async function postToSupabase(path, body, signal, extraHeaders) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    method: "POST",
-    headers: {
-      apikey: SUPABASE_PUBLISHABLE_KEY,
-      "Content-Type": "application/json",
-      ...extraHeaders,
-    },
-    body: JSON.stringify(body),
-    credentials: "omit",
-    cache: "no-store",
-    signal,
-  });
-  if (res.ok) return null;
-
-  const error = { status: res.status, code: "", message: `HTTP ${res.status}` };
-  try {
-    const info = await res.json();
-    error.code = info.code || "";
-    error.message = info.message || error.message;
-  } catch {
-    /* the answer was not JSON */
-  }
-  return error;
-}
-
-function isMissingFunction(error) {
-  return (
-    error &&
-    (error.code === "PGRST202" ||
-      error.code === "42883" ||
-      /could not find the function/i.test(error.message || ""))
-  );
-}
-
-// Sends the email to Supabase. Never throws: a database problem should not
-// block the visitor, so problems are only written to the browser console.
-// Returns "ok", "unavailable" (problem on our side: the visitor still gets in),
-// or, with the CAPTCHA on only, "captcha_failed" / "invalid_email" (the visitor
-// is NOT logged in).
-async function saveEmailToSupabase(email, captchaToken) {
-  if (captchaEnabled) return registerWithCaptcha(email, captchaToken);
-
-  if (!supabaseIsConfigured) {
-    console.warn("Supabase is not set up, so this email was not saved online.");
-    return "unavailable";
-  }
-
+// One small helper for every Supabase Auth call. Never throws: status 0 = no connection.
+async function authFetch(path, { method = "POST", body, token } = {}) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), SAVE_TIMEOUT_MS);
-
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    let error = await postToSupabase(
-      `rpc/${SAVE_FUNCTION}`,
-      { p_email: email },
-      controller.signal,
-    );
-
-    if (error && FALLBACK_TO_DIRECT_INSERT && isMissingFunction(error)) {
-      error = await postToSupabase(
-        EMAILS_TABLE,
-        { [EMAILS_COLUMN]: email },
-        controller.signal,
-        { Prefer: "return=minimal" },
-      );
-      // Code 23505 means this email is already in the table, which is fine.
-      if (error && error.code === "23505") error = null;
-    }
-
-    if (error) {
-      console.error("Supabase error:", error.message);
-      return "unavailable";
-    }
-    return "ok";
-  } catch (err) {
-    console.error("Could not reach Supabase:", err);
-    return "unavailable";
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-// CAPTCHA mode: the Edge Function checks the CAPTCHA, then saves the email.
-async function registerWithCaptcha(email, token) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), SAVE_TIMEOUT_MS);
-  try {
-    const res = await fetch(REGISTER_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, token }),
+    const headers = { apikey: SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" };
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
       credentials: "omit",
       cache: "no-store",
+      keepalive: true,
       signal: controller.signal,
     });
-    if (res.ok) return "ok";
-
-    let code = "";
-    try {
-      code = (await res.json()).error || "";
-    } catch {
-      /* the answer was not JSON */
-    }
-    if (code === "captcha_failed") return "captcha_failed";
-    if (code === "invalid_email") return "invalid_email";
-    console.error("Could not save the email:", res.status, code);
-    return "unavailable";
-  } catch (err) {
-    console.error("Could not reach the register function:", err);
-    return "unavailable";
+    let data = null;
+    try { data = await res.json(); } catch { /* empty or not JSON */ }
+    return { ok: res.ok, status: res.status, data };
+  } catch {
+    return { ok: false, status: 0, data: null };
   } finally {
     clearTimeout(timer);
   }
 }
+
+// Step 1: Supabase checks the CAPTCHA, then emails a code. Returns a result word.
+async function sendLoginCode(email, captchaToken) {
+  const r = await authFetch("otp", {
+    body: { email, create_user: true, gotrue_meta_security: { captcha_token: captchaToken } },
+  });
+  if (r.ok) return "ok";
+  const code = (r.data && r.data.error_code) || "";
+  const msg = (r.data && (r.data.msg || r.data.message)) || "";
+  if (code === "captcha_failed" || /captcha/i.test(msg)) return "captcha_failed";
+  if (r.status === 429 || /rate_limit/.test(code)) return "rate_limited";
+  if (code === "validation_failed" || code === "email_address_invalid") return "invalid_email";
+  console.error("Could not send the code:", r.status, code, msg);
+  return "unavailable";
+}
+
+function sessionFromResponse(d, email, signedInAt) {
+  return {
+    email: String((d.user && d.user.email) || email).toLowerCase(),
+    signedInAt,
+    accessToken: d.access_token,
+    refreshToken: d.refresh_token,
+    expiresAt: d.expires_at ? d.expires_at * 1000 : Date.now() + (d.expires_in || 3600) * 1000,
+  };
+}
+
+// Step 2: Supabase checks the code and returns a real session.
+async function checkLoginCode(email, code) {
+  const r = await authFetch("verify", { body: { type: "email", email, token: code } });
+  if (r.ok && r.data && r.data.access_token && r.data.refresh_token) {
+    return { ok: true, session: sessionFromResponse(r.data, email, Date.now()) };
+  }
+  if (r.status === 429) return { ok: false, reason: "rate_limited" };
+  if (r.status === 0 || r.status >= 500) return { ok: false, reason: "unavailable" };
+  return { ok: false, reason: "invalid_code" };
+}
+
+// Asks Supabase whether the saved login is real. true / false / "offline".
+// A forged value in localStorage fails here because the server rejects its token.
+async function verifySession() {
+  const user = auth.get();
+  if (!user) return false;
+  let token = user.accessToken;
+  if (!user.expiresAt || user.expiresAt - Date.now() < 60000) {
+    const r = await authFetch("token?grant_type=refresh_token", {
+      body: { refresh_token: user.refreshToken },
+    });
+    if (r.status === 0) return "offline";
+    if (!(r.ok && r.data && r.data.access_token)) return false;
+    const next = sessionFromResponse(r.data, user.email, user.signedInAt);
+    auth.set(next);
+    token = next.accessToken;
+  }
+  const me = await authFetch("user", { method: "GET", token });
+  if (me.status === 0) return "offline";
+  return me.ok;
+}
+
+// Members-only pages stay hidden (boot.js) until the server confirms the login.
+if (needsLogin && auth.get()) {
+  verifySession().then((state) => {
+    if (state === true) {
+      document.documentElement.style.visibility = "";
+      return;
+    }
+    if (state === false) auth.clear();
+    window.location.replace("login.html");
+  });
+}
+
 
 // ===== Email check (same rules the database enforces) =====
 // Lower-case only: the address is lower-cased before it is checked.
@@ -554,90 +518,133 @@ function storageWorks() {
   }
 }
 
-// ===== Login form (email only) =====
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
   const loginCard = document.getElementById("loginCard");
   const emailInput = document.getElementById("loginEmail");
   const emailField = document.getElementById("loginField");
+  const codeStep = document.getElementById("codeStep");
+  const codeInput = document.getElementById("loginCode");
+  const codeField = document.getElementById("codeField");
+  const codeActions = document.getElementById("codeActions");
+  const changeEmail = document.getElementById("changeEmail");
+  const leadEl = document.querySelector(".login-lead");
   const errorEl = document.getElementById("loginError");
   const submitBtn = document.getElementById("loginSubmit");
   const captchaBox = document.getElementById("captchaBox");
   const BLOCKED_MESSAGE =
     "Your browser is blocking site data, so we can't keep you logged in. Allow site data and try again.";
+  const SEND_ERRORS = {
+    captcha_failed: "The security check failed. Please try again.",
+    invalid_email: "That email doesn't look right. Check it and try again.",
+    rate_limited: "Too many tries. Please wait a few minutes and try again.",
+    unavailable: "We couldn't send the code right now. Please try again in a minute.",
+  };
+  const CODE_ERRORS = {
+    invalid_code: "That code is wrong or has expired. Check it, or use a different email to get a new one.",
+    rate_limited: "Too many tries. Please wait a few minutes and try again.",
+    unavailable: "We couldn't check the code right now. Please try again in a minute.",
+  };
 
+  let step = "email"; // "email" then "code"
+  let submitting = false;
+  let pendingEmail = "";
+  let captchaToken = "";
+  let captchaWidgetId = null;
+
+  // Already logged in? Only offer the shortcut if the server confirms it.
   const saved = auth.get();
   if (saved && saved.email) {
     emailInput.value = saved.email;
-    // already logged in: offer a way into the site
-    const continueEl = document.getElementById("loginContinue");
-    if (continueEl) continueEl.hidden = false;
+    verifySession().then((state) => {
+      const continueEl = document.getElementById("loginContinue");
+      if (state === true && continueEl) continueEl.hidden = false;
+    });
   }
 
   function showError(message) {
+    const field = step === "code" ? codeField : emailField;
+    const input = step === "code" ? codeInput : emailInput;
     errorEl.textContent = message;
-    emailField.classList.add("has-error");
-    emailInput.setAttribute("aria-invalid", "true");
-    emailInput.focus();
+    field.classList.add("has-error");
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
   }
 
   function clearError() {
     errorEl.textContent = "";
-    emailField.classList.remove("has-error");
-    emailInput.removeAttribute("aria-invalid");
+    [[emailField, emailInput], [codeField, codeInput]].forEach(([f, i]) => {
+      f.classList.remove("has-error");
+      i.removeAttribute("aria-invalid");
+    });
   }
 
   emailInput.addEventListener("input", clearError);
+  codeInput.addEventListener("input", clearError);
 
-  // ----- CAPTCHA (only when TURNSTILE_SITE_KEY is set) -----
-  let captchaToken = "";
-  let captchaWidgetId = null;
+  function updateSubmit() {
+    submitBtn.disabled = submitting || (step === "email" && captchaEnabled && !captchaToken);
+  }
 
+  function resetCaptcha() {
+    captchaToken = ""; // a token works once, so every new attempt needs a fresh one
+    if (captchaWidgetId !== null && window.turnstile) window.turnstile.reset(captchaWidgetId);
+    updateSubmit();
+  }
+
+  function setStep(next) {
+    step = next;
+    clearError();
+    const isCode = next === "code";
+    emailInput.readOnly = isCode;
+    codeStep.hidden = !isCode;
+    codeActions.hidden = !isCode;
+    if (captchaBox) captchaBox.hidden = isCode || !captchaEnabled;
+    submitBtn.textContent = isCode ? "Verify code" : "Log in";
+    if (leadEl) {
+      leadEl.textContent = isCode
+        ? `We sent a code to ${pendingEmail}. Enter it below.`
+        : "Enter your email and we'll send you a login code.";
+    }
+    if (isCode) {
+      codeInput.value = "";
+      codeInput.focus();
+    } else {
+      resetCaptcha();
+      emailInput.focus();
+    }
+    updateSubmit();
+  }
+
+  // ----- CAPTCHA (Cloudflare Turnstile) -----
   function loadTurnstile() {
     return new Promise((resolve, reject) => {
       if (window.turnstile) return resolve();
       const script = document.createElement("script");
       script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      script.async = false;
       script.onload = () =>
-        window.turnstile && window.turnstile.ready
-          ? window.turnstile.ready(resolve)
-          : resolve();
+        window.turnstile && window.turnstile.ready ? window.turnstile.ready(resolve) : resolve();
       script.onerror = reject;
       document.head.appendChild(script);
     });
   }
 
-  function resetCaptcha() {
-    captchaToken = "";
-    if (captchaWidgetId !== null && window.turnstile) {
-      window.turnstile.reset(captchaWidgetId);
-    }
-    submitBtn.disabled = captchaEnabled;
-  }
-
+  if (leadEl) leadEl.textContent = "Enter your email and we'll send you a login code.";
   if (captchaEnabled && captchaBox) {
     captchaBox.hidden = false;
-    submitBtn.disabled = true; // switched on again when the CAPTCHA is solved
     loadTurnstile()
       .then(() => {
         captchaWidgetId = window.turnstile.render(captchaBox, {
           sitekey: TURNSTILE_SITE_KEY,
           theme: "light",
           size: captchaBox.clientWidth < 300 ? "compact" : "normal",
-          callback: (token) => {
-            captchaToken = token;
-            submitBtn.disabled = false;
-          },
-          "expired-callback": () => {
-            captchaToken = "";
-            submitBtn.disabled = true;
-          },
+          callback: (token) => { captchaToken = token; updateSubmit(); },
+          "expired-callback": () => { captchaToken = ""; updateSubmit(); },
           "error-callback": () => {
             captchaToken = "";
-            submitBtn.disabled = true;
-            showError("The security check could not run. Refresh the page and try again.");
+            updateSubmit();
+            if (step === "email") showError("The security check could not run. Refresh the page and try again.");
           },
         });
       })
@@ -645,61 +652,57 @@ if (loginForm) {
         showError("The security check could not load. Check your connection and refresh the page.");
       });
   }
+  updateSubmit();
+
+  changeEmail.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!submitting) setStep("email");
+  });
 
   // ----- sending the form -----
-  let submitting = false;
-
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (submitting) return;
-    const email = emailInput.value.trim().toLowerCase();
 
-    if (!email) {
-      showError("Enter your email address.");
+    if (step === "email") {
+      const email = emailInput.value.trim().toLowerCase();
+      if (!email) return showError("Enter your email address.");
+      if (!isValidEmail(email)) return showError("That email doesn't look right. Check it and try again.");
+      if (captchaEnabled && !captchaToken) return showError("Please complete the security check first.");
+      if (!storageWorks()) return showError(BLOCKED_MESSAGE);
+
+      clearError();
+      submitting = true;
+      updateSubmit();
+      submitBtn.textContent = "Sending code…";
+      const result = await sendLoginCode(email, captchaToken);
+      submitting = false;
+      if (result === "ok") {
+        pendingEmail = email;
+        setStep("code");
+        return;
+      }
+      submitBtn.textContent = "Log in";
+      resetCaptcha();
+      showError(SEND_ERRORS[result] || SEND_ERRORS.unavailable);
       return;
     }
-    if (!isValidEmail(email)) {
-      showError("That email doesn't look right. Check it and try again.");
-      return;
-    }
-    if (captchaEnabled && !captchaToken) {
-      showError("Please complete the security check first.");
-      return;
-    }
-    if (!storageWorks()) {
-      showError(BLOCKED_MESSAGE);
-      return;
-    }
+
+    // step "code": the login is saved only if Supabase accepts the code
+    const code = codeInput.value.replace(/\s/g, "");
+    if (!/^\d{6,10}$/.test(code)) return showError("Enter the code from your email (numbers only).");
 
     clearError();
     submitting = true;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Logging in…";
+    updateSubmit();
+    submitBtn.textContent = "Checking…";
+    const result = await checkLoginCode(pendingEmail, code);
+    submitting = false;
+    submitBtn.textContent = "Verify code";
+    updateSubmit();
+    if (!result.ok) return showError(CODE_ERRORS[result.reason] || CODE_ERRORS.unavailable);
 
-    const result = await saveEmailToSupabase(email, captchaToken);
-
-    // With the CAPTCHA on, a failed check or a refused email means: not logged in
-    if (result === "captcha_failed" || result === "invalid_email") {
-      submitting = false;
-      submitBtn.textContent = "Log in";
-      resetCaptcha();
-      showError(
-        result === "captcha_failed"
-          ? "The security check failed. Please try again."
-          : "That email doesn't look right. Check it and try again.",
-      );
-      return;
-    }
-
-    // the login is only saved after every check passed
-    if (!auth.set(email)) {
-      submitting = false;
-      submitBtn.disabled = captchaEnabled;
-      submitBtn.textContent = "Log in";
-      resetCaptcha();
-      showError(BLOCKED_MESSAGE);
-      return;
-    }
+    if (!auth.set(result.session)) return showError(BLOCKED_MESSAGE);
 
     loginCard.classList.add("is-success");
     renderAuthLink();
@@ -707,4 +710,4 @@ if (loginForm) {
       window.location.href = "index.html";
     }, prefersReducedMotion ? 0 : 250);
   });
-}
+} 

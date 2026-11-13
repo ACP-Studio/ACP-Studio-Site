@@ -43,6 +43,8 @@
       if (typeof user.signedInAt !== "number" || !isFinite(user.signedInAt)) {
         return null;
       }
+      if (typeof user.accessToken !== "string" || user.accessToken.length < 20) return null;
+      if (typeof user.refreshToken !== "string" || user.refreshToken.length < 5) return null;
       var age = Date.now() - user.signedInAt;
       if (age < -CLOCK_SKEW_MS || age > MAX_AGE_MS) return null;
       return user;
@@ -54,8 +56,15 @@
   window.ACP_STORAGE_KEY = KEY;
   window.acpReadUser = readUser;
 
-  if (root.getAttribute("data-access") === "members" && !readUser()) {
-    root.style.visibility = "hidden"; // no flash of the page while redirecting
-    location.replace("login.html");
+  if (root.getAttribute("data-access") === "members") {
+    // script.js shows the page only after Supabase confirms the login is real
+    root.style.visibility = "hidden";
+    if (!readUser()) {
+      location.replace("login.html");
+    } else {
+      setTimeout(function () {
+        if (root.style.visibility === "hidden") location.replace("login.html");
+      }, 10000);
+    }
   }
 })();

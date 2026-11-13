@@ -2,7 +2,7 @@
 <html lang="en" data-access="public">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' https://challenges.cloudflare.com; font-src 'self'; img-src 'self' data: https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; font-src 'self'; img-src 'self' data:; frame-src https://challenges.cloudflare.com; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#e3c6a6" />
     <script src="boot.js"></script>
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="prefetch" href="index.html" />
     <title>Log in · ACP-Studio</title>
-  </head>
+  </head> 
   <body class="login-page">
     <!-- Dynamic Island Navigation -->
     <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
@@ -37,7 +37,7 @@
       <section class="login-card fade-in-up" id="loginCard">
         <div class="intro-tag">Welcome to ACP-Studio</div>
         <h1>Log in</h1>
-        <p class="login-lead">Enter your email to continue. No password needed.</p>
+        <p class="login-lead">Enter your email and we'll send you a login code.</p>
 
         <form class="login-form" id="loginForm" novalidate>
           <div>
@@ -56,12 +56,19 @@
                 aria-describedby="loginError"
               />
             </div>
+            <div id="codeStep" hidden>
+              <label class="login-label" for="loginCode">Code from your email</label>
+              <div class="input-glass" id="codeField">
+                <input type="text" id="loginCode" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" spellcheck="false" />
+              </div>
+            </div>
             <p class="login-error" id="loginError" role="alert"></p>
           </div>
           <div class="captcha-box" id="captchaBox" hidden></div>
           <button type="submit" class="btn btn-primary login-submit" id="loginSubmit">
             Log in
           </button>
+          <p class="login-alt" id="codeActions" hidden><a href="#" id="changeEmail">Use a different email</a></p>
         </form>
 
         <p class="login-alt" id="loginContinue" hidden>
