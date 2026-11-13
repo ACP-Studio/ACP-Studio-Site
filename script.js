@@ -623,8 +623,10 @@ if (loginForm) {
       if (window.turnstile) return resolve();
       const script = document.createElement("script");
       script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      // Do not call turnstile.ready() here: it throws for scripts added with async,
+      // and scripts created by code are async by default.
       script.onload = () =>
-        window.turnstile && window.turnstile.ready ? window.turnstile.ready(resolve) : resolve();
+        window.turnstile ? resolve() : reject(new Error("Turnstile did not load"));
       script.onerror = reject;
       document.head.appendChild(script);
     });
@@ -710,4 +712,4 @@ if (loginForm) {
       window.location.href = "index.html";
     }, prefersReducedMotion ? 0 : 250);
   });
-} 
+}
