@@ -599,6 +599,7 @@ if (loginForm) {
       if (window.turnstile) return resolve();
       const script = document.createElement("script");
       script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = false;
       script.onload = () =>
         window.turnstile && window.turnstile.ready
           ? window.turnstile.ready(resolve)
