@@ -391,7 +391,7 @@ const EMAILS_COLUMN = "Email";
 // Leave the key empty to keep the CAPTCHA OFF. To turn it on, paste your
 // Turnstile SITE key here (it is public, like the Supabase key) and follow
 // CAPTCHA-SETUP.md. NEVER put the Turnstile SECRET key in this file.
-const TURNSTILE_SITE_KEY = "";
+const TURNSTILE_SITE_KEY = "0x4AAAAAAF_IHt-c_RQfEGZW";
 // With the CAPTCHA on, emails are saved by the register-email Edge Function,
 // which checks the CAPTCHA on the server before saving anything.
 const REGISTER_ENDPOINT = `${SUPABASE_URL}/functions/v1/register-email`;
@@ -705,6 +705,6 @@ if (loginForm) {
     renderAuthLink();
     setTimeout(() => {
       window.location.href = "index.html";
-    }, prefersReducedMotion ? 0 : 120);
+    }, prefersReducedMotion ? 0 : 250);
   });
 }

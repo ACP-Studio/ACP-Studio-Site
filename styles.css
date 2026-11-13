@@ -132,9 +132,13 @@
   --transition-smooth: cubic-bezier(0.33, 1, 0.68, 1);
   --ease-spring: cubic-bezier(0.22, 1.06, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-fast: 220ms;
-  --duration-normal: 350ms;
-  --duration-slow: 500ms;
+  --duration-fast: 500ms;
+  --duration-normal: 750ms;
+  --duration-slow: 1100ms;
+  /* How long things take to fade in when a page opens. Kept shorter than
+     --duration-slow on purpose, so changing page never feels like waiting.
+     Raise it for a slower entrance. */
+  --duration-enter: 800ms;
 
   /* One motion language for the whole site: transforms use the island's spring,
      colors, fills and shadows ease softly alongside it. */
@@ -378,10 +382,10 @@ body::after {
     inset 0 1px 0 rgba(255, 255, 255, 0.85),
     inset 0 -1px 0 rgba(172, 119, 79, 0.2);
   transition:
-    width 600ms var(--ease-spring),
-    padding 600ms var(--ease-spring),
-    grid-template-rows 600ms var(--ease-spring),
-    border-radius 400ms var(--ease-spring),
+    width 1300ms var(--ease-spring),
+    padding 1300ms var(--ease-spring),
+    grid-template-rows 1300ms var(--ease-spring),
+    border-radius 800ms var(--ease-spring),
     background-color 500ms var(--transition-smooth),
     box-shadow 500ms var(--transition-smooth);
 }
@@ -543,19 +547,19 @@ body::after {
 
 /* Links drop in row by row, left to right */
 .island-nav.active a:nth-child(1) {
-  transition-delay: 60ms, 60ms, 60ms, 0ms, 0ms;
-}
-.island-nav.active a:nth-child(2) {
-  transition-delay: 85ms, 85ms, 85ms, 0ms, 0ms;
-}
-.island-nav.active a:nth-child(3) {
   transition-delay: 120ms, 120ms, 120ms, 0ms, 0ms;
 }
+.island-nav.active a:nth-child(2) {
+  transition-delay: 170ms, 170ms, 170ms, 0ms, 0ms;
+}
+.island-nav.active a:nth-child(3) {
+  transition-delay: 240ms, 240ms, 240ms, 0ms, 0ms;
+}
 .island-nav.active a:nth-child(4) {
-  transition-delay: 145ms, 145ms, 145ms, 0ms, 0ms;
+  transition-delay: 290ms, 290ms, 290ms, 0ms, 0ms;
 }
 .island-nav.active a:nth-child(5) {
-  transition-delay: 180ms, 180ms, 180ms, 0ms, 0ms;
+  transition-delay: 360ms, 360ms, 360ms, 0ms, 0ms;
 }
 
 .island-nav a:hover,
@@ -1616,32 +1620,32 @@ footer {
 }
 
 .login-card > * {
-  animation: loginRise var(--duration-slow) var(--ease-spring) backwards;
+  animation: loginRise var(--duration-enter) var(--ease-spring) backwards;
 }
 
 .login-card > :nth-child(1) {
-  animation-delay: 30ms;
+  animation-delay: 50ms;
 }
 .login-card > :nth-child(2) {
-  animation-delay: 70ms;
+  animation-delay: 100ms;
 }
 .login-card > :nth-child(3) {
-  animation-delay: 110ms;
-}
-.login-card > :nth-child(4) {
   animation-delay: 150ms;
 }
+.login-card > :nth-child(4) {
+  animation-delay: 200ms;
+}
 .login-card > :nth-child(5) {
-  animation-delay: 190ms;
+  animation-delay: 250ms;
 }
 .login-card > :nth-child(6) {
-  animation-delay: 230ms;
+  animation-delay: 300ms;
 }
 
 @keyframes loginRise {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(22px);
   }
   to {
     opacity: 1;
@@ -1728,7 +1732,7 @@ footer {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(16px) scale(0.98);
+    transform: translateY(32px) scale(0.96);
   }
   to {
     opacity: 1;
@@ -1742,7 +1746,7 @@ footer {
 
 .fade-in-up.visible {
   opacity: 1;
-  animation: fadeInUp var(--duration-slow) var(--ease-spring) backwards;
+  animation: fadeInUp var(--duration-enter) var(--ease-spring) backwards;
 }
 
 /* Staggered animations */
@@ -1750,19 +1754,19 @@ footer {
   animation-delay: 0ms;
 }
 .fade-in-up:nth-child(2) {
-  animation-delay: 40ms;
+  animation-delay: 60ms;
 }
 .fade-in-up:nth-child(3) {
-  animation-delay: 80ms;
-}
-.fade-in-up:nth-child(4) {
   animation-delay: 120ms;
 }
+.fade-in-up:nth-child(4) {
+  animation-delay: 180ms;
+}
 .fade-in-up:nth-child(5) {
-  animation-delay: 160ms;
+  animation-delay: 240ms;
 }
 .fade-in-up:nth-child(6) {
-  animation-delay: 200ms;
+  animation-delay: 300ms;
 }
 
 /* ===== Reduced motion ===== */
