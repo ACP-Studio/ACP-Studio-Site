@@ -3,7 +3,10 @@
       items when this class exists, so the site is never blank if scripts fail.
    2. On members-only pages (<html data-access="members">), sends visitors who
       are not logged in to login.html before anything is drawn.
-   3. Provides acpReadUser(), the one place that decides whether the saved
+   3. Before the opening time (LAUNCH_AT below), sends every page except the
+      under-development page and the legal pages to under-development.html.
+      After that time the gate switches itself off.
+   4. Provides acpReadUser(), the one place that decides whether the saved
       login is real. script.js uses it too, so the two can never disagree.
 
    Note: this is a convenience gate, not real security. Everything in this
@@ -16,6 +19,13 @@
   var MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // a login lasts 30 days
   var CLOCK_SKEW_MS = 5 * 60 * 1000; // allow a slightly wrong device clock
   var root = document.documentElement;
+
+  // Opening time: 18 Nov 2026, 18:00 in Dubai (GMT+4) = 14:00 UTC.
+  // Month is 0-based in JavaScript, so 10 means November.
+  // To change the date, edit this one line. To remove the gate, delete it.
+  var LAUNCH_AT = Date.UTC(2026, 10, 18, 14, 0, 0);
+  // Pages that stay open before the opening time
+  var OPEN_PAGES = ["under-development.html", "privacy.html", "terms.html", "cookies.html"];
 
   root.classList.add("js");
 
@@ -55,6 +65,21 @@
 
   window.ACP_STORAGE_KEY = KEY;
   window.acpReadUser = readUser;
+  window.ACP_LAUNCH_AT = LAUNCH_AT;
+
+  // Not open yet: show the under-development page instead of this one.
+  // (A visitor's own clock decides this, so it is not a security feature.)
+  var page = location.pathname.split("/").pop().toLowerCase();
+  if (Date.now() < LAUNCH_AT && OPEN_PAGES.indexOf(page) === -1) {
+    root.style.visibility = "hidden";
+    try {
+      window.stop(); // keeps script.js from starting its own redirect
+    } catch (e) {
+      /* not needed: the redirect below still works */
+    }
+    location.replace("under-development.html");
+    return;
+  }
 
   if (root.getAttribute("data-access") === "members") {
     // script.js shows the page only after Supabase confirms the login is real
