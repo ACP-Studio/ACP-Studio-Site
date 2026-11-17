@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-access="public">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; font-src 'self'; img-src 'self' data:; frame-src https://challenges.cloudflare.com; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#071b18" />
+    <script src="boot.js"></script>
+    <link rel="preload" href="fonts/cascadia-code-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/png" href="Assests/logo.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="prefetch" href="index.html" />
+    <title>Log in · ACP-Studio</title>
+  </head> 
+  <body class="login-page">
+    <!-- Dynamic Island Navigation -->
+    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
+      <div class="island-status">
+        <span class="island-section"><span id="islandSection">Log in</span></span>
+        <span class="island-name">ACP Studio</span>
+      </div>
+      <div class="island-nav" id="islandNav">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#projects">C++ Projects</a>
+        <a href="index.html#studio">YouTube Studio</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" id="authLink" aria-current="page">Log in</a>
+      </div>
+    </nav>
+
+    <!-- Decorative glass orbs (the card blurs them) -->
+    <div class="login-orbs" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <main>
+      <section class="login-card fade-in-up" id="loginCard">
+        <div class="intro-tag">Welcome to ACP-Studio</div>
+        <h1>Log in</h1>
+        <p class="login-lead">Enter your email and we'll send you a login code.</p>
+
+        <form class="login-form" id="loginForm" novalidate>
+          <div>
+            <label class="login-label" for="loginEmail">Email address</label>
+            <div class="input-glass" id="loginField">
+              <input
+                type="email"
+                id="loginEmail"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                inputmode="email"
+                maxlength="254"
+                spellcheck="false"
+                required
+                aria-describedby="loginError"
+              />
+            </div>
+            <div id="codeStep" hidden>
+              <label class="login-label" for="loginCode">Code from your email</label>
+              <div class="input-glass" id="codeField">
+                <input type="text" id="loginCode" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" spellcheck="false" />
+              </div>
+            </div>
+            <p class="login-error" id="loginError" role="alert"></p>
+          </div>
+          <div class="captcha-box" id="captchaBox" hidden></div>
+          <button type="submit" class="btn btn-primary login-submit" id="loginSubmit">
+            Log in
+          </button>
+          <p class="login-alt" id="codeActions" hidden><a href="#" id="changeEmail">Use a different email</a></p>
+        </form>
+
+        <p class="login-alt" id="loginContinue" hidden>
+          <a href="index.html">Continue to the site</a>
+        </p>
+
+        <p class="login-legal">
+          By continuing you agree to the
+          <a href="terms.html">Terms &amp; Conditions</a> and the
+          <a href="privacy.html">Privacy Policy</a>.
+          We also have a <a href="cookies.html">Cookies</a> page.
+        </p>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
