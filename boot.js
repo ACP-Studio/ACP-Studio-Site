@@ -23,7 +23,7 @@
   // Opening time: 18 Nov 2026, 18:00 in Dubai (GMT+4) = 14:00 UTC.
   // Month is 0-based in JavaScript, so 10 means November.
   // To change the date, edit this one line. To remove the gate, delete it.
-  var LAUNCH_AT = Date.UTC(2026, 10, 18, 20, 0, 0);
+  var LAUNCH_AT = Date.UTC(2026, 10, 19, 10, 0, 0);
    window.ACP_LAUNCH_AT = LAUNCH_AT;
   // Pages that stay open before the opening time
   var OPEN_PAGES = ["under-development.html", "privacy.html", "terms.html", "cookies.html"];
