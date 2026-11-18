@@ -5,7 +5,7 @@
   "use strict";
 
   // 18 Nov 2026, 18:00 in Dubai (GMT+4) = 14:00 UTC. Same value as in boot.js.
-  var LAUNCH_AT = window.ACP_LAUNCH_AT || Date.UTC(2026, 10, 18, 14, 0, 0);
+  var LAUNCH_AT = window.ACP_LAUNCH_AT || Date.UTC(2026, 10, 18,20, 0, 0);
 
   var els = {
     d: document.getElementById("cdDays"),
@@ -40,7 +40,7 @@
   try {
     var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     var line = document.getElementById("devLocal");
-    if (line && zone !== "Asia/Dubai") {
+    if (line && zone !== "Asia/UAE") {
       var local = new Intl.DateTimeFormat(undefined, {
         weekday: "long",
         day: "numeric",
