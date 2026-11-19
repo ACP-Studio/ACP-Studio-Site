@@ -5,15 +5,13 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="ACP-Studio: C++ projects and YouTube content by Zeyad Adel." />
-    <meta name="theme-color" content="#071b18" />
+    <meta name="theme-color" content="#1a1715" />
     <script src="boot.js"></script>
-    <link rel="preload" href="fonts/cascadia-code-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" href="Assests/logo.png" />
     <link rel="stylesheet" href="styles.css" />
     <title>ACP-Studio</title>
   </head>
   <body>
-    <!-- Dynamic Island Navigation -->
     <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
       <div class="island-status">
         <span class="island-section"><span id="islandSection">Home</span></span>
@@ -24,13 +22,12 @@
         <a href="#projects">C++ Projects</a>
         <a href="#studio">YouTube Studio</a>
         <a href="#contact">Contact</a>
-        <a href="login.html" id="authLink">Log in</a>
+        <a href="team.html">Team</a>
+        <a href="login.html" id="authLink">Log Out</a>
       </div>
     </nav>
 
-    <!-- Main Content -->
     <main>
-      <!-- Intro Section -->
       <section id="home" class="intro-section container">
         <div class="intro-content">
           <div class="intro-tag fade-in-up">
@@ -58,7 +55,6 @@
         </div>
       </section>
 
-      <!-- Projects Section -->
       <section id="projects" class="projects-section">
         <div class="container">
           <div class="section-header">
@@ -78,7 +74,7 @@
                 input is not empty, contains only letters and spaces.
               </p>
               <div class="project-footer">
-                
+
                 <a
                   href="https://github.com/ACP-Studio/Username-Valedation"
                   class="project-link"
@@ -101,10 +97,6 @@
                  The program checks if a password meets basic security rules (length, uppercase, lowercase, digit, special character, no spaces)
               </p>
               <div class="project-footer">
-                <!-- <div class="project-tech">
-                  <span class="tech-badge">C++17</span>
-                  <span class="tech-badge">Lock-Free</span>
-                </div> -->
                 <a
                   href="https://github.com/ACP-Studio/Password-Validation"
                   class="project-link"
@@ -156,17 +148,12 @@
               </div>
             </div>
 
-
             <div class="project-card fade-in-up">
               <div class="project-tag">commercial</div>
               <h3 class="project-title">Computer store</h3>
               <p class="project-description">
                   An object-oriented C++ computer parts store for the command line, with a shopping basket, compatibility checks and receipts.              </p>
               <div class="project-footer">
-                <!-- <div class="project-tech">
-                  <span class="tech-badge">C++17</span>
-                  <span class="tech-badge">Lock-Free</span>
-                </div> -->
                 <a
                   href="https://github.com/ACP-Studio/Computer-Store"
                   class="project-link"
@@ -184,7 +171,6 @@
         </div>
       </section>
 
-      <!-- YouTube Studio Section -->
       <section id="studio" class="studio-section">
         <div class="container">
           <div class="section-header">
@@ -250,7 +236,6 @@
       </section>
     </main>
 
-    <!-- Footer -->
     <footer id="contact">
       <div class="container">
         <div class="footer-content">
@@ -267,6 +252,8 @@
             <h4>Navigate</h4>
             <a href="#home">Home</a>
             <a href="#projects">Projects</a>
+            <a href="team.html">Team</a>
+            <a href="company.html">Company</a>
             <a href="https://www.youtube.com/@ACP-Studios">YouTube</a>
           </div>
           <div class="footer-links">

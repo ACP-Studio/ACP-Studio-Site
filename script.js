@@ -1,18 +1,10 @@
-// ===== Settings =====
-// true = visitors must log in before they can see the site (login.html comes first).
-// Set to false to make the login optional again.
 const REQUIRE_LOGIN = true;
-// Must match the key in boot.js (boot.js is loaded first and provides it)
 const STORAGE_KEY = window.ACP_STORAGE_KEY || "acpStudioUser";
 
 const prefersReducedMotion = window.matchMedia(
   "(prefers-reduced-motion: reduce)",
 ).matches;
 
-// ===== Email-only sign-in (stored in this browser only) =====
-// Reading goes through boot.js (acpReadUser), which rejects forged, malformed
-// and expired (older than 30 days) values. This is a convenience gate, not
-// real security: see the note at the top of boot.js.
 const auth = {
   get() {
     return typeof window.acpReadUser === "function" ? window.acpReadUser() : null;
@@ -36,41 +28,33 @@ const auth = {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
-      /* storage unavailable */
     }
   },
 };
 
-// "public" pages (login and the legal pages) can be read without logging in,
-// so people can read the Privacy Policy before they give their email.
 const isPublicPage = document.documentElement.dataset.access === "public";
 const isLoginPage = document.body.classList.contains("login-page");
 const isSoonPage = document.body.classList.contains("soon-page");
 const needsLogin = REQUIRE_LOGIN && !isPublicPage;
 
-// Remove a saved login that is invalid or expired so it can't linger
 if (!auth.get()) auth.clear();
 
 if (needsLogin && !auth.get()) {
   window.location.replace("login.html");
 }
 
-// Back button after logging out: a cached copy of the page must not show
 window.addEventListener("pageshow", (e) => {
   if (e.persisted && needsLogin && !auth.get()) {
     window.location.replace("login.html");
   }
 });
 
-// A tab left open past the 30 days (or a login removed meanwhile): check again
-// when the person comes back to the tab
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && needsLogin && !auth.get()) {
     window.location.replace("login.html");
   }
 });
 
-// Logging out (or in) in another tab updates this tab too
 window.addEventListener("storage", (e) => {
   if (e.key !== null && e.key !== STORAGE_KEY) return;
   if (needsLogin && !auth.get()) {
@@ -78,30 +62,39 @@ window.addEventListener("storage", (e) => {
     return;
   }
   renderAuthLink();
+  syncIslandLock();
 });
 
-// ===== Dynamic Island =====
 const dynamicIsland = document.getElementById("dynamicIsland");
 const islandNav = document.getElementById("islandNav");
 
-// Before logging in, the island on the login page stays closed (logo only)
-const islandLocked = REQUIRE_LOGIN && isLoginPage && !auth.get();
-if (islandLocked) {
-  dynamicIsland.classList.add("is-locked");
-  dynamicIsland.removeAttribute("tabindex");
-}
-
 let isExpanded = false;
 
+function canUseIsland() {
+  return !REQUIRE_LOGIN || !!auth.get();
+}
+
 function setExpanded(next) {
-  if (islandLocked || next === isExpanded) return;
+  if (next && !canUseIsland()) return;
+  if (next === isExpanded) return;
   isExpanded = next;
   dynamicIsland.classList.toggle("expanded", isExpanded);
   islandNav.classList.toggle("active", isExpanded);
 }
 
-// Mouse / trackpad: the island opens on hover and closes when the pointer leaves.
-// Touch screens have no hover, so tapping the island opens and closes it there.
+function syncIslandLock() {
+  const locked = !canUseIsland();
+  dynamicIsland.classList.toggle("is-locked", locked);
+  if (locked) {
+    dynamicIsland.removeAttribute("tabindex");
+    setExpanded(false);
+  } else {
+    dynamicIsland.setAttribute("tabindex", "0");
+  }
+}
+
+syncIslandLock();
+
 const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 let collapseTimer;
 
@@ -119,7 +112,6 @@ if (canHover) {
   dynamicIsland.addEventListener("pointerenter", openIsland);
   dynamicIsland.addEventListener("pointerleave", closeIslandSoon);
 
-  // Keyboard users: opens when focus enters, closes when it leaves
   dynamicIsland.addEventListener("focusin", openIsland);
   dynamicIsland.addEventListener("focusout", (e) => {
     if (!dynamicIsland.contains(e.relatedTarget)) closeIslandSoon();
@@ -133,41 +125,28 @@ if (canHover) {
   });
 }
 
-// Close island when clicking nav links
-// document.querySelectorAll(".island-nav a").forEach((link) => {
-//   link.addEventListener("click", () => setExpanded(false));
-// });
-
-// Close with the Escape key
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && isExpanded) {
     setExpanded(false);
   }
 });
 
-
-// Close island when clicking outside
 document.addEventListener("click", (e) => {
   if (isExpanded && !dynamicIsland.contains(e.target)) {
     setExpanded(false);
   }
 });
 
-// Prevent island from closing when clicking inside it.
-// On touch screens, tapping the island itself (not a link) opens or closes it.
 dynamicIsland.addEventListener("click", (e) => {
   e.stopPropagation();
   if (canHover) return;
   if (!e.target.closest("a")) {
     setExpanded(!isExpanded);
   } else {
-    // touch screens: close the island after a link is tapped, so it does not
-    // stay open on top of the section you just scrolled to
     setExpanded(false);
   }
 });
 
-// ===== Island label: shows the section you are reading =====
 const islandSection = document.getElementById("islandSection");
 
 if (islandSection && !isLoginPage && !isSoonPage) {
@@ -182,14 +161,12 @@ if (islandSection && !isLoginPage && !isSoonPage) {
   let ticking = false;
 
   function currentSectionLabel() {
-    // a section counts as "current" once its top passes 40% of the screen height
     const line = window.innerHeight * 0.4;
     let label = SECTIONS[0][1];
     for (const [id, name] of SECTIONS) {
       const el = document.getElementById(id);
       if (el && el.getBoundingClientRect().top <= line) label = name;
     }
-    // at the very bottom of the page, always say Contact
     const atBottom =
       window.innerHeight + window.scrollY >=
       document.documentElement.scrollHeight - 4;
@@ -206,7 +183,7 @@ if (islandSection && !isLoginPage && !isSoonPage) {
     swapTimer = setTimeout(() => {
       islandSection.textContent = next;
       islandSection.classList.remove("is-swapping");
-    }, prefersReducedMotion ? 0 : 220);
+    }, prefersReducedMotion ? 0 : 380);
   }
 
   window.addEventListener(
@@ -223,7 +200,6 @@ if (islandSection && !isLoginPage && !isSoonPage) {
   updateIslandLabel();
 }
 
-// ===== Intersection Observer for fade-in animations =====
 const observerOptions = {
   threshold: 0.1,
   rootMargin: "0px 0px -50px 0px",
@@ -239,35 +215,77 @@ if ("IntersectionObserver" in window) {
     });
   }, observerOptions);
 
-  // Observe all fade-in elements
   document.querySelectorAll(".fade-in-up").forEach((el) => {
     observer.observe(el);
   });
 } else {
-  // very old browsers: just show everything
   document.querySelectorAll(".fade-in-up").forEach((el) => {
     el.classList.add("visible");
   });
 }
 
-// ===== Smooth scroll behavior for navigation =====
+let scrollFrame = 0;
+
+function cancelSmoothScroll() {
+  if (!scrollFrame) return;
+  cancelAnimationFrame(scrollFrame);
+  scrollFrame = 0;
+  document.documentElement.style.scrollBehavior = "";
+}
+
+["wheel", "touchstart", "mousedown", "keydown"].forEach((type) =>
+  window.addEventListener(type, cancelSmoothScroll, { passive: true }),
+);
+
+function easeInOutQuart(t) {
+  return t < 0.5 ? 8 * t ** 4 : 1 - (-2 * t + 2) ** 4 / 2;
+}
+
+function smoothScrollTo(target) {
+  cancelSmoothScroll();
+  const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+  const startY = window.scrollY;
+  const maxY = document.documentElement.scrollHeight - window.innerHeight;
+  const endY = Math.min(
+    Math.max(target.getBoundingClientRect().top + startY - margin, 0),
+    maxY,
+  );
+  const distance = endY - startY;
+
+  if (prefersReducedMotion || Math.abs(distance) < 2) {
+    window.scrollTo(0, endY);
+    return;
+  }
+
+  const duration = Math.min(1900, Math.max(1000, Math.abs(distance) * 0.75));
+  const root = document.documentElement;
+  const t0 = performance.now();
+  root.style.scrollBehavior = "auto";
+
+  const step = (now) => {
+    const p = Math.min((now - t0) / duration, 1);
+    window.scrollTo(0, startY + distance * easeInOutQuart(p));
+    if (p < 1) {
+      scrollFrame = requestAnimationFrame(step);
+    } else {
+      scrollFrame = 0;
+      root.style.scrollBehavior = "";
+    }
+  };
+  scrollFrame = requestAnimationFrame(step);
+}
+
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {
     const href = this.getAttribute("href");
     if (href !== "#") {
       e.preventDefault();
       const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
+      if (target) smoothScrollTo(target);
     }
   });
 });
 
-// ===== Log in / Log out link in the island =====
 const authLink = document.getElementById("authLink");
 
 function renderAuthLink() {
@@ -287,8 +305,6 @@ function renderAuthLink() {
   }
 }
 
-// Asks "Are you sure?" in a glass dialog. Resolves true only if the visitor
-// presses the Yes button; Cancel, Escape and clicking outside all resolve false.
 function confirmLogout(email) {
   if (document.querySelector(".confirm-overlay.open")) return Promise.resolve(false);
 
@@ -305,7 +321,6 @@ function confirmLogout(email) {
           <button type="button" class="btn btn-danger" data-answer="yes">Yes, log out</button>
         </div>
       </div>`;
-    // textContent, not innerHTML, so the email is always shown as plain text
     overlay.querySelector("#confirmText").textContent =
       `You're signed in as ${email}. Do you really want to log out?`;
 
@@ -319,7 +334,7 @@ function confirmLogout(email) {
       document.removeEventListener("keydown", onKeydown);
       document.body.style.overflow = previousOverflow;
       overlay.classList.remove("open");
-      setTimeout(() => overlay.remove(), 900);
+      setTimeout(() => overlay.remove(), 1000);
       resolve(answer);
     }
 
@@ -327,7 +342,6 @@ function confirmLogout(email) {
       if (e.key === "Escape") {
         close(false);
       } else if (e.key === "Tab") {
-        // keep keyboard focus inside the dialog
         const first = noBtn;
         const last = yesBtn;
         if (e.shiftKey && document.activeElement === first) {
@@ -347,11 +361,10 @@ function confirmLogout(email) {
     });
     document.addEventListener("keydown", onKeydown);
 
-    // two frames so the opening transition always plays
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         overlay.classList.add("open");
-        noBtn.focus(); // the safe choice is focused by default
+        noBtn.focus();
       }),
     );
   });
@@ -360,11 +373,11 @@ function confirmLogout(email) {
 function performLogout() {
   const user = auth.get();
   if (user && user.accessToken) {
-    authFetch("logout", { token: user.accessToken }); // ends the session on the server too
+    authFetch("logout", { token: user.accessToken });
   }
   auth.clear();
   renderAuthLink();
-  setExpanded(false);
+  syncIslandLock();
   window.location.href = "login.html";
 }
 
@@ -380,16 +393,12 @@ if (authLink) {
   renderAuthLink();
 }
 
-// ===== Supabase Auth: real login with an emailed code =====
-// Supabase checks the Turnstile CAPTCHA itself (Dashboard > Authentication >
-// Attack Protection), so it cannot be skipped. Use the PUBLISHABLE key only.
 const SUPABASE_URL = "https://ppvncqbwfkubqmuehsfl.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_gasiCPaJ54I4G-2phqTlXg_5JL65S1j";
-const TURNSTILE_SITE_KEY = "0x4AAAAAAF_IHt-c_RQfEGZW"; // public; the SECRET key lives only in the Supabase dashboard
+const TURNSTILE_SITE_KEY = "0x4AAAAAAF_IHt-c_RQfEGZW";
 const captchaEnabled = TURNSTILE_SITE_KEY !== "";
 const REQUEST_TIMEOUT_MS = 10000;
 
-// One small helper for every Supabase Auth call. Never throws: status 0 = no connection.
 async function authFetch(path, { method = "POST", body, token } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -406,7 +415,7 @@ async function authFetch(path, { method = "POST", body, token } = {}) {
       signal: controller.signal,
     });
     let data = null;
-    try { data = await res.json(); } catch { /* empty or not JSON */ }
+    try { data = await res.json(); } catch {  }
     return { ok: res.ok, status: res.status, data };
   } catch {
     return { ok: false, status: 0, data: null };
@@ -415,7 +424,6 @@ async function authFetch(path, { method = "POST", body, token } = {}) {
   }
 }
 
-// Step 1: Supabase checks the CAPTCHA, then emails a code. Returns a result word.
 async function sendLoginCode(email, captchaToken) {
   const r = await authFetch("otp", {
     body: { email, create_user: true, gotrue_meta_security: { captcha_token: captchaToken } },
@@ -440,7 +448,6 @@ function sessionFromResponse(d, email, signedInAt) {
   };
 }
 
-// Step 2: Supabase checks the code and returns a real session.
 async function checkLoginCode(email, code) {
   const r = await authFetch("verify", { body: { type: "email", email, token: code } });
   if (r.ok && r.data && r.data.access_token && r.data.refresh_token) {
@@ -451,8 +458,6 @@ async function checkLoginCode(email, code) {
   return { ok: false, reason: "invalid_code" };
 }
 
-// Asks Supabase whether the saved login is real. true / false / "offline".
-// A forged value in localStorage fails here because the server rejects its token.
 async function verifySession() {
   const user = auth.get();
   if (!user) return false;
@@ -472,7 +477,6 @@ async function verifySession() {
   return me.ok;
 }
 
-// Members-only pages stay hidden (boot.js) until the server confirms the login.
 if (needsLogin && auth.get()) {
   verifySession().then((state) => {
     if (state === true) {
@@ -484,9 +488,6 @@ if (needsLogin && auth.get()) {
   });
 }
 
-
-// ===== Email check (same rules the database enforces) =====
-// Lower-case only: the address is lower-cased before it is checked.
 const EMAIL_LOCAL = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/;
 const EMAIL_DOMAIN =
   /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
@@ -497,7 +498,7 @@ function isValidEmail(email) {
     return false;
   }
   const at = email.lastIndexOf("@");
-  if (at < 1 || at > 64) return false; // local part must be 1 to 64 characters
+  if (at < 1 || at > 64) return false;
   const local = email.slice(0, at);
   const domain = email.slice(at + 1);
   if (local.startsWith(".") || local.endsWith(".") || local.includes("..")) {
@@ -506,7 +507,6 @@ function isValidEmail(email) {
   return EMAIL_LOCAL.test(local) && EMAIL_DOMAIN.test(domain) && EMAIL_TLD.test(domain);
 }
 
-// Some browsers (private mode, strict settings) refuse to store anything
 function storageWorks() {
   try {
     const probe = STORAGE_KEY + "_test";
@@ -547,13 +547,12 @@ if (loginForm) {
     unavailable: "We couldn't check the code right now. Please try again in a minute.",
   };
 
-  let step = "email"; // "email" then "code"
+  let step = "email";
   let submitting = false;
   let pendingEmail = "";
   let captchaToken = "";
   let captchaWidgetId = null;
 
-  // Already logged in? Only offer the shortcut if the server confirms it.
   const saved = auth.get();
   if (saved && saved.email) {
     emailInput.value = saved.email;
@@ -567,6 +566,8 @@ if (loginForm) {
     const field = step === "code" ? codeField : emailField;
     const input = step === "code" ? codeInput : emailInput;
     errorEl.textContent = message;
+    field.classList.remove("has-error");
+    void field.offsetWidth;
     field.classList.add("has-error");
     input.setAttribute("aria-invalid", "true");
     input.focus();
@@ -588,7 +589,7 @@ if (loginForm) {
   }
 
   function resetCaptcha() {
-    captchaToken = ""; // a token works once, so every new attempt needs a fresh one
+    captchaToken = "";
     if (captchaWidgetId !== null && window.turnstile) window.turnstile.reset(captchaWidgetId);
     updateSubmit();
   }
@@ -617,14 +618,11 @@ if (loginForm) {
     updateSubmit();
   }
 
-  // ----- CAPTCHA (Cloudflare Turnstile) -----
   function loadTurnstile() {
     return new Promise((resolve, reject) => {
       if (window.turnstile) return resolve();
       const script = document.createElement("script");
       script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      // Do not call turnstile.ready() here: it throws for scripts added with async,
-      // and scripts created by code are async by default.
       script.onload = () =>
         window.turnstile ? resolve() : reject(new Error("Turnstile did not load"));
       script.onerror = reject;
@@ -661,7 +659,6 @@ if (loginForm) {
     if (!submitting) setStep("email");
   });
 
-  // ----- sending the form -----
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (submitting) return;
@@ -690,7 +687,6 @@ if (loginForm) {
       return;
     }
 
-    // step "code": the login is saved only if Supabase accepts the code
     const code = codeInput.value.replace(/\s/g, "");
     if (!/^\d{6,10}$/.test(code)) return showError("Enter the code from your email (numbers only).");
 
@@ -710,6 +706,6 @@ if (loginForm) {
     renderAuthLink();
     setTimeout(() => {
       window.location.href = "index.html";
-    }, prefersReducedMotion ? 0 : 250);
+    }, prefersReducedMotion ? 0 : 700);
   });
 }

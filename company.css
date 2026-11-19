@@ -1,0 +1,20 @@
+.wide-card {
+  grid-column: 1 / -1;
+}
+
+.member-bio {
+  margin-top: 0.4rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border-glass);
+  width: 100%;
+}
+
+.facts-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 820px) {
+  .facts-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
