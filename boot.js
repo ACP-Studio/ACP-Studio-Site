@@ -41,11 +41,18 @@
   window.ACP_STORAGE_KEY = KEY;
   window.acpReadUser = readUser;
 
+  // false: show the page immediately when a saved login exists and check it
+  //        with the server in the background (script.js sends you to
+  //        login.html if the server says no). Much faster first view.
+  // true:  keep the page blank until the server has answered (old behaviour).
+  var VERIFY_BEFORE_SHOW = false;
+
   if (root.getAttribute("data-access") === "members") {
-    root.style.visibility = "hidden";
     if (!readUser()) {
+      root.style.visibility = "hidden";
       location.replace("login.html");
-    } else {
+    } else if (VERIFY_BEFORE_SHOW) {
+      root.style.visibility = "hidden";
       setTimeout(function () {
         if (root.style.visibility === "hidden") location.replace("login.html");
       }, 10000);

@@ -102,6 +102,8 @@
 html {
   scroll-behavior: smooth;
   font-synthesis: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 h1,
@@ -143,9 +145,13 @@ body::after {
 
 body::before {
   background:
-    url("bg.svg") center / cover no-repeat,
+    url("bg.webp") center / cover no-repeat,
     linear-gradient(180deg, #121c1a 0%, #2a3631 55%, #36432e 100%);
-  animation: bgDrift 48s ease-in-out infinite alternate;
+  /* Same slow drift, but in 480 tiny steps (~10 updates/s, each <0.3px).
+     Every glass panel re-blurs whenever the background moves, so this cuts
+     that work ~6x while looking identical. For the old smooth easing use:
+     animation: bgDrift 48s ease-in-out infinite alternate; */
+  animation: bgDrift 48s steps(480) infinite alternate;
   will-change: transform;
 }
 
@@ -666,6 +672,10 @@ footer > .container {
   white-space: nowrap;
 }
 
+.status-badge {
+  position: relative;
+}
+
 .status-badge::before {
   content: "";
   width: 7px;
@@ -675,17 +685,43 @@ footer > .container {
   animation: status-pulse 2.4s ease-in-out infinite;
 }
 
+/* The expanding ring used to be an animated box-shadow (repainted every
+   frame). Now it is a scaled, fading dot, so the GPU does all the work. */
+.status-badge::after {
+  content: "";
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: rgba(20, 32, 26, 0.45);
+  pointer-events: none;
+  animation: status-ring 2.4s ease-in-out infinite;
+}
+
 @keyframes status-pulse {
   0%,
   100% {
     opacity: 1;
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(20, 32, 26, 0.45);
   }
   50% {
     opacity: 0.4;
     transform: scale(0.7);
-    box-shadow: 0 0 0 7px rgba(20, 32, 26, 0);
+  }
+}
+
+@keyframes status-ring {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(3);
   }
 }
 
@@ -1606,5 +1642,32 @@ footer {
   }
   75% {
     transform: translateX(3px);
+  }
+}
+/* Touch devices: a tap leaves :hover stuck, which kept cards lifted and
+   re-ran the big shadow transitions. Hover motion is for mouse users only. */
+@media (hover: none) {
+  .btn-primary:hover:not(:active),
+  .btn-glass:hover:not(:active),
+  .btn-danger:hover:not(:active),
+  .project-card:hover,
+  .studio-featured:hover,
+  .visual-card:hover,
+  .youtube-project-link:hover,
+  .project-link:hover,
+  .stat-box:hover,
+  .footer-links a:hover,
+  .social-links a:hover {
+    transform: none;
+  }
+
+  .project-card:hover,
+  .studio-featured:hover,
+  .visual-card:hover {
+    box-shadow: var(--rim);
+  }
+
+  .studio-featured:hover .studio-thumbnail img {
+    transform: none;
   }
 }
