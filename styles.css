@@ -147,11 +147,11 @@ body::before {
   background:
     url("bg.webp") center / cover no-repeat,
     linear-gradient(180deg, #121c1a 0%, #2a3631 55%, #36432e 100%);
-  /* Same slow drift, but in 480 tiny steps (~10 updates/s, each <0.3px).
-     Every glass panel re-blurs whenever the background moves, so this cuts
-     that work ~6x while looking identical. For the old smooth easing use:
+  /* Same slow drift, in 96 tiny steps (~2 updates/s, each under 1px).
+     Every glass panel re-blurs whenever the background moves, so fewer
+     updates = far less work. For the old smooth easing use:
      animation: bgDrift 48s ease-in-out infinite alternate; */
-  animation: bgDrift 48s steps(480) infinite alternate;
+  animation: bgDrift 48s steps(96) infinite alternate;
   will-change: transform;
 }
 
@@ -376,14 +376,12 @@ footer > .container {
   max-width: none;
   margin-inline: auto;
   padding: var(--panel-pad);
-  background-color: var(--panel-base);
-  background-image: var(--panel-fill);
+  /* The frosted-glass fill now lives in the .glass child (see below). */
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-panel);
   position: relative;
+  isolation: isolate;
   box-shadow: var(--panel-shadow);
-  backdrop-filter: var(--blur-panel);
-  -webkit-backdrop-filter: var(--blur-panel);
 }
 
 .intro-section {
@@ -1670,4 +1668,57 @@ footer {
   .studio-featured:hover .studio-thumbnail img {
     transform: none;
   }
+}
+
+/* PERFORMANCE: every glass panel (backdrop-filter) is re-blurred whenever
+   anything animating moves in front of or inside it. The endless decorative
+   animations therefore freeze while the page is scrolling (script.js adds
+   .is-scrolling) and while they are off-screen (.hero-away / .is-away), and
+   continue from the same spot afterwards. */
+.is-scrolling body::before,
+.is-scrolling .intro-visual,
+.is-scrolling .intro-content::before,
+.is-scrolling .login-card::before,
+.is-scrolling .status-badge::before,
+.is-scrolling .status-badge::after,
+.hero-away .intro-visual,
+.hero-away .intro-content::before,
+.status-badge.is-away::before,
+.status-badge.is-away::after {
+  animation-play-state: paused;
+}
+
+/* FROSTED GLASS WITHOUT A LIVE BLUR
+   backdrop-filter re-blurs everything behind a panel on every scroll frame,
+   which is what made the site heavy. The background never moves relative to
+   the screen, so instead each panel gets a .glass layer: a screen-fixed copy
+   of the background that is already blurred and colour-boosted (bg-blur.webp,
+   made once from bg.webp: blur ~16px, saturate 165%), clipped to the panel's
+   rounded shape. Looks the same, but the GPU only has to move layers.
+   (The small menu pill and the login/legal cards still use a live blur.) */
+.glass {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  clip-path: inset(0 round var(--radius-panel));
+  pointer-events: none;
+}
+
+.glass::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    url("bg-blur.webp") center / cover no-repeat,
+    #1b2723;
+}
+
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--panel-base);
+  background-image: var(--panel-fill);
 }
