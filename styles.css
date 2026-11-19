@@ -167,16 +167,16 @@ body::after {
   /* island motion: long springy width/height change, links drop in one by one */
   --island-smooth: cubic-bezier(0.33, 1, 0.68, 1);
   --island-spring: cubic-bezier(0.22, 1.06, 0.36, 1);
-  --island-fast: 500ms;
-  --island-normal: 750ms;
-  --island-slow: 1100ms;
+  --island-fast: 600ms;
+  --island-normal: 900ms;
+  --island-slow: 1300ms;
 
   position: fixed;
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  width: 160px;
+  width: 150px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 52px 0fr;
@@ -193,8 +193,8 @@ body::after {
   transition:
     width 650ms var(--island-smooth),
     padding 650ms var(--island-smooth),
-    grid-template-rows 650ms var(--island-smooth),
-    background-color 450ms var(--island-smooth);
+    grid-template-rows 760ms var(--island-smooth),
+    background-color 600ms var(--island-smooth);
 }
 
 .dynamic-island.is-locked {
