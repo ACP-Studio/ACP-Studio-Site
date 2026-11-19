@@ -183,7 +183,7 @@ if (islandSection && !isLoginPage && !isSoonPage) {
     swapTimer = setTimeout(() => {
       islandSection.textContent = next;
       islandSection.classList.remove("is-swapping");
-    }, prefersReducedMotion ? 0 : 380);
+    }, prefersReducedMotion ? 0 : 220);
   }
 
   window.addEventListener(
@@ -223,36 +223,6 @@ if ("IntersectionObserver" in window) {
     el.classList.add("visible");
   });
 }
-
-/* Performance: freeze the endless decorative animations while scrolling and
-   while off-screen (see the matching rules at the end of styles.css). */
-(function () {
-  const root = document.documentElement;
-  let idleTimer;
-  window.addEventListener(
-    "scroll",
-    () => {
-      root.classList.add("is-scrolling");
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => root.classList.remove("is-scrolling"), 200);
-    },
-    { passive: true },
-  );
-  if ("IntersectionObserver" in window) {
-    const awayObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.target.classList.contains("intro-section")) {
-          root.classList.toggle("hero-away", !entry.isIntersecting);
-        } else {
-          entry.target.classList.toggle("is-away", !entry.isIntersecting);
-        }
-      });
-    });
-    document
-      .querySelectorAll(".intro-section, .status-badge")
-      .forEach((el) => awayObserver.observe(el));
-  }
-})();
 
 let scrollFrame = 0;
 
