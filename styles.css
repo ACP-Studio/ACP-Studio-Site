@@ -39,6 +39,16 @@
     rgba(255, 255, 255, calc(var(--glass-veil) * 1.35)) 0%,
     rgba(255, 255, 255, calc(var(--glass-veil) * 0.5)) 42%,
     rgba(255, 255, 255, calc(var(--glass-veil) * 0.8)) 100%
+
+    --transition-surface:
+    transform var(--duration-slow) var(--ease-spring),
+    background var(--duration-normal) var(--transition-smooth),
+    background-color var(--duration-normal) var(--transition-smooth),
+    border-color var(--duration-normal) var(--transition-smooth),
+    box-shadow var(--duration-normal) var(--transition-smooth),
+    color var(--duration-normal) var(--transition-smooth),
+    opacity var(--duration-normal) var(--transition-smooth);
+    
   );
   --panel-base: rgba(6, 12, 10, 0.3);
   --card-fill: rgba(8, 16, 13, 0.24);
@@ -170,31 +180,37 @@ body::after {
 }
 
 .dynamic-island {
-  position: fixed;
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  width: 200px;
+  width: 176px;
+  padding: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 52px 0fr;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius);
   overflow: hidden;
-  background-color: rgba(8, 16, 13, 0.34);
-  background-image: var(--panel-fill);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: rgba(18, 60, 53, 0.1);
+  background-image: linear-gradient(
+    135deg,
+    rgba(244, 234, 216, 0.2) 0%,
+    rgba(244, 234, 216, 0.05) 40%,
+    rgba(244, 234, 216, 0.12) 66%,
+    rgba(244, 234, 216, 0.03) 100%
+  );
   backdrop-filter: var(--blur-small);
   -webkit-backdrop-filter: var(--blur-small);
   box-shadow:
     0 14px 40px rgba(0, 0, 0, 0.36),
     var(--rim);
   transition:
-    width 4000ms ease,
-    padding 4000ms ease,
-    grid-template-rows 4000ms ease,
-    border-radius 4000ms ease,
-    background-color 400ms ease;
+    width 1300ms var(--ease-spring),
+    padding 1300ms var(--ease-spring),
+    grid-template-rows 1300ms var(--ease-spring),
+    border-radius 800ms var(--ease-spring),
+    background-color 500ms var(--transition-smooth),
+    box-shadow 500ms var(--transition-smooth);
 }
 
 .dynamic-island.is-locked {
