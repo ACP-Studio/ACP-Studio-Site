@@ -1,5 +1,131 @@
+/* company.html styles.
+   Standalone: depends only on the shared tokens and base rules in styles.css
+   (--card-fill, --rim, --border-glass, --radius-card, .section-header, .project-tag, .icon, .fade-in-up).
+   Nothing here relies on the deleted team.css. */
+
+/* ---------- Page layout ----------
+   styles.css centres .soon-page main in a one-cell grid, which suits the small
+   login/legal cards but would shrink these wide panels. Use a normal block flow. */
+.company-page main {
+  display: block;
+  min-height: 0;
+  padding: var(--nav-clear) 0 var(--panel-gap);
+}
+
+/* the first panel already sits below the nav, so drop the extra top gap */
+.company-page #company {
+  padding-top: 0;
+}
+
+/* ---------- Grids ---------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.facts-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .wide-card {
   grid-column: 1 / -1;
+}
+
+/* ---------- Cards (same glass look as .project-card) ---------- */
+.co-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.75rem;
+  background: var(--card-fill);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-card);
+  box-shadow: var(--rim);
+  transition:
+    transform 1000ms var(--ease-spring),
+    box-shadow var(--t-normal) var(--ease),
+    background-color var(--t-normal) var(--ease),
+    border-color var(--t-normal) var(--ease);
+}
+
+.co-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--rim-gradient-soft);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.co-card:hover {
+  background: var(--card-fill-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-5px) scale(1.008);
+  box-shadow:
+    var(--rim),
+    0 28px 60px rgba(0, 0, 0, 0.3);
+}
+
+.co-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.4rem;
+  line-height: 1.25;
+}
+
+.co-card p {
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+.wide-card p {
+  max-width: 78ch;
+}
+
+/* ---------- Team members ---------- */
+.member-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 1.75rem;
+}
+
+.member-card h3 {
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+}
+
+.member-details {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.member-details li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.93rem;
 }
 
 .member-bio {
@@ -9,12 +135,15 @@
   width: 100%;
 }
 
-.facts-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
+/* ---------- Responsive ---------- */
 @media (max-width: 820px) {
   .facts-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .co-card {
+    padding: 1.5rem;
   }
 }

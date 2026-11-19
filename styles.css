@@ -184,11 +184,11 @@ body::after {
     0 14px 40px rgba(0, 0, 0, 0.36),
     var(--rim);
   transition:
-    width 650ms var(--ease-island),
-    padding 650ms var(--ease-island),
-    grid-template-rows 650ms var(--ease-island),
-    border-radius 650ms var(--ease-island),
-    background-color 650ms var(--ease-island);
+    width 250ms ease,
+    padding 250ms ease,
+    grid-template-rows 250ms ease,
+    border-radius 250ms ease,
+    background-color 250ms ease;
 }
 
 .dynamic-island.is-locked {
@@ -222,26 +222,16 @@ body::after {
   font-weight: 600;
   color: var(--text-primary);
   opacity: 1;
-  transform: scale(1);
-  filter: blur(0);
-  transition:
-    opacity var(--t-normal) var(--ease) 120ms,
-    transform 500ms var(--ease-island),
-    filter var(--t-normal) var(--ease) 120ms;
+  transition: opacity 200ms ease;
 }
 
 .island-section span {
   display: inline-block;
-  transition:
-    opacity 360ms var(--ease),
-    transform 360ms var(--ease),
-    filter 360ms var(--ease);
+  transition: opacity 200ms ease;
 }
 
 .island-section span.is-swapping {
   opacity: 0;
-  transform: translateY(8px);
-  filter: blur(3px);
 }
 
 .island-name {
@@ -250,29 +240,15 @@ body::after {
   letter-spacing: 0.01em;
   color: var(--ivory);
   opacity: 0;
-  transform: translateY(10px) scale(0.94);
-  filter: blur(6px);
-  transition:
-    opacity var(--t-fast) var(--ease),
-    transform 500ms var(--ease-island),
-    filter var(--t-fast) var(--ease);
+  transition: opacity 200ms ease;
 }
 
 .dynamic-island.expanded .island-section {
   opacity: 0;
-  transform: scale(0.9);
-  filter: blur(6px);
-  transition-delay: 0ms;
 }
 
 .dynamic-island.expanded .island-name {
   opacity: 1;
-  transform: none;
-  filter: none;
-  transition:
-    opacity var(--t-normal) var(--ease) 160ms,
-    transform 550ms var(--ease-island) 100ms,
-    filter var(--t-normal) var(--ease) 160ms;
 }
 
 .dynamic-island.is-locked .island-nav {
@@ -289,8 +265,8 @@ body::after {
   visibility: hidden;
   pointer-events: none;
   transition:
-    opacity var(--t-normal) var(--ease),
-    visibility 0s linear 650ms;
+    opacity 200ms ease,
+    visibility 0s linear 250ms;
 }
 
 .island-nav.active {
@@ -298,7 +274,7 @@ body::after {
   visibility: visible;
   pointer-events: auto;
   transition:
-    opacity var(--t-normal) var(--ease) 120ms,
+    opacity 200ms ease 100ms,
     visibility 0s;
 }
 
@@ -1571,10 +1547,6 @@ footer {
     transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-.island-nav a[href="team.html"] {
-  grid-column: 1 / -1;
 }
 
 /* Extra motion: soft, springy, with momentum */
