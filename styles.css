@@ -191,8 +191,8 @@ body::after {
     0 14px 40px rgba(0, 0, 0, 0.36),
     var(--rim);
   transition:
-    width 650ms var(--island-smooth),
-    padding 650ms var(--island-smooth),
+    width 800ms var(--island-smooth),
+    padding 800ms var(--island-smooth),
     grid-template-rows 760ms var(--island-smooth),
     background-color 600ms var(--island-smooth);
 }
@@ -202,7 +202,7 @@ body::after {
 }
 
 .dynamic-island.expanded {
-  width: min(calc(100vw - 2rem), 360px);
+  width: min(calc(100vw - 2rem), 320px);
   padding: 0 10px;
   grid-template-rows: 52px 1fr;
   background-color: rgba(8, 16, 13, 0.66);
