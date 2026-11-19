@@ -176,11 +176,11 @@ body::after {
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  width: 200px;
+  width: 160px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 52px 0fr;
-  border-radius: var(--radius-pill);
+  border-radius: 28px;
   overflow: hidden;
   background-color: rgba(8, 16, 13, 0.34);
   background-image: var(--panel-fill);
@@ -191,11 +191,10 @@ body::after {
     0 14px 40px rgba(0, 0, 0, 0.36),
     var(--rim);
   transition:
-    width 1300ms var(--island-spring),
-    padding 1300ms var(--island-spring),
-    grid-template-rows 1300ms var(--island-spring),
-    border-radius 800ms var(--island-spring),
-    background-color 500ms var(--island-smooth);
+    width 650ms var(--island-smooth),
+    padding 650ms var(--island-smooth),
+    grid-template-rows 650ms var(--island-smooth),
+    background-color 450ms var(--island-smooth);
 }
 
 .dynamic-island.is-locked {
@@ -206,7 +205,6 @@ body::after {
   width: min(calc(100vw - 2rem), 360px);
   padding: 0 10px;
   grid-template-rows: 52px 1fr;
-  border-radius: 30px;
   background-color: rgba(8, 16, 13, 0.66);
 }
 
@@ -230,12 +228,7 @@ body::after {
   font-weight: 600;
   color: var(--text-primary);
   opacity: 1;
-  transform: scale(1);
-  filter: blur(0);
-  transition:
-    opacity var(--island-normal) var(--island-smooth) 160ms,
-    transform var(--island-slow) var(--island-spring) 120ms,
-    filter var(--island-normal) var(--island-smooth) 160ms;
+  transition: opacity 300ms var(--island-smooth);
 }
 
 /* the text swaps with a quick fade + slide when you scroll to a new section */
@@ -257,29 +250,16 @@ body::after {
   letter-spacing: 0.01em;
   color: var(--ivory);
   opacity: 0;
-  transform: translateY(12px) scale(0.94);
-  filter: blur(8px);
-  transition:
-    opacity var(--island-fast) var(--island-smooth),
-    transform var(--island-normal) var(--island-spring),
-    filter var(--island-fast) var(--island-smooth);
+  transition: opacity 300ms var(--island-smooth);
 }
 
 .dynamic-island.expanded .island-section {
   opacity: 0;
-  transform: scale(0.9);
-  filter: blur(8px);
-  transition-delay: 0ms;
 }
 
 .dynamic-island.expanded .island-name {
   opacity: 1;
-  transform: none;
-  filter: none;
-  transition:
-    opacity var(--island-normal) var(--island-smooth) 220ms,
-    transform var(--island-slow) var(--island-spring) 180ms,
-    filter var(--island-normal) var(--island-smooth) 220ms;
+  transition: opacity 400ms var(--island-smooth) 150ms;
 }
 
 .dynamic-island.is-locked .island-nav {
@@ -296,8 +276,8 @@ body::after {
   visibility: hidden;
   pointer-events: none;
   transition:
-    opacity var(--island-normal) var(--island-smooth),
-    visibility 0s linear var(--island-slow);
+    opacity 250ms var(--island-smooth),
+    visibility 0s linear 650ms;
 }
 
 .island-nav.active {
@@ -305,7 +285,7 @@ body::after {
   visibility: visible;
   pointer-events: auto;
   transition:
-    opacity var(--island-normal) var(--island-smooth) 130ms,
+    opacity 400ms var(--island-smooth) 200ms,
     visibility 0s;
 }
 
@@ -320,37 +300,14 @@ body::after {
   padding: 11px 10px;
   border-radius: var(--radius-pill);
   opacity: 0;
-  transform: translateY(-8px) scale(0.97);
-  filter: blur(6px);
   transition:
-    opacity var(--island-normal) var(--island-smooth),
-    transform var(--island-slow) var(--island-spring),
-    filter var(--island-normal) var(--island-smooth),
+    opacity 400ms var(--island-smooth),
     color var(--island-fast) var(--island-smooth),
     background-color var(--island-fast) var(--island-smooth);
 }
 
 .island-nav.active a {
   opacity: 1;
-  transform: none;
-  filter: none;
-}
-
-/* links drop in row by row, left to right */
-.island-nav.active a:nth-child(1) {
-  transition-delay: 120ms, 120ms, 120ms, 0ms, 0ms;
-}
-.island-nav.active a:nth-child(2) {
-  transition-delay: 170ms, 170ms, 170ms, 0ms, 0ms;
-}
-.island-nav.active a:nth-child(3) {
-  transition-delay: 240ms, 240ms, 240ms, 0ms, 0ms;
-}
-.island-nav.active a:nth-child(4) {
-  transition-delay: 290ms, 290ms, 290ms, 0ms, 0ms;
-}
-.island-nav.active a:nth-child(5) {
-  transition-delay: 360ms, 360ms, 360ms, 0ms, 0ms;
 }
 
 .island-nav a:last-child {
@@ -460,6 +417,8 @@ footer > .container {
 .intro-content {
   position: relative;
   z-index: 2;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .intro-tag,
@@ -598,6 +557,8 @@ footer > .container {
 }
 
 .intro-visual {
+  grid-column: 2;
+  grid-row: 1;
   position: relative;
   display: flex;
   align-items: center;
@@ -1507,6 +1468,15 @@ footer {
 @media (max-width: 1024px) {
   .intro-section {
     grid-template-columns: 1fr;
+  }
+
+  .intro-content,
+  .intro-visual {
+    grid-column: 1;
+  }
+
+  .intro-visual {
+    grid-row: 2;
   }
 
   .intro-visual {
