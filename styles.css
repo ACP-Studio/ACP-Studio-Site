@@ -84,9 +84,9 @@
   --ease-island: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-spring: cubic-bezier(0.3, 1.4, 0.5, 1);
   --ease-spring-strong: cubic-bezier(0.34, 1.56, 0.5, 1);
-  --t-fast: 400ms;
-  --t-normal: 750ms;
-  --t-enter: 1200ms;
+  --t-fast: 600ms;
+  --t-normal: 900ms;
+  --t-enter: 1400ms;
 }
 
 * {
@@ -190,11 +190,11 @@ body::after {
     0 14px 40px rgba(0, 0, 0, 0.36),
     var(--rim);
   transition:
-    width 250ms ease,
-    padding 250ms ease,
-    grid-template-rows 250ms ease,
-    border-radius 250ms ease,
-    background-color 250ms ease;
+    width 4000ms ease,
+    padding 4000ms ease,
+    grid-template-rows 4000ms ease,
+    border-radius 4000ms ease,
+    background-color 400ms ease;
 }
 
 .dynamic-island.is-locked {
