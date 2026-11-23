@@ -705,7 +705,7 @@ if (loginForm) {
     loginCard.classList.add("is-success");
     renderAuthLink();
     setTimeout(() => {
-      window.location.href = "index.html";
+      window.location.href = "closing.html";
     }, prefersReducedMotion ? 0 : 700);
   });
 }
