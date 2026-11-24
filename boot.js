@@ -63,10 +63,39 @@
   // true:  keep the page blank until the server has answered (old behaviour).
   var VERIFY_BEFORE_SHOW = false;
 
+  // Closing notice: a logged-in user who opens the site in a new browser session
+  // (new tab or window, after closing it) is sent to closing.html once.
+  // sessionStorage remembers that they have seen it until the tab is closed.
+  var CLOSING_SEEN_KEY = "acpClosingSeen";
+  var SHOW_CLOSING_NOTICE = true;
+
+  function sessionWorks() {
+    try {
+      sessionStorage.setItem(CLOSING_SEEN_KEY + "_test", "1");
+      sessionStorage.removeItem(CLOSING_SEEN_KEY + "_test");
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   if (root.getAttribute("data-access") === "members") {
     if (!readUser()) {
       root.style.visibility = "hidden";
       location.replace("login.html");
+    } else if (root.getAttribute("data-page") === "closing") {
+      try {
+        sessionStorage.setItem(CLOSING_SEEN_KEY, "1");
+      } catch (e) {
+      }
+    } else if (
+      SHOW_CLOSING_NOTICE &&
+      sessionWorks() &&
+      !sessionStorage.getItem(CLOSING_SEEN_KEY)
+    ) {
+      root.setAttribute("data-closing-redirect", "1");
+      root.style.visibility = "hidden";
+      location.replace("closing.html");
     } else if (VERIFY_BEFORE_SHOW) {
       root.style.visibility = "hidden";
       setTimeout(function () {

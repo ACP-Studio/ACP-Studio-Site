@@ -493,6 +493,8 @@ async function verifySession() {
 if (needsLogin && auth.get()) {
   verifySession().then((state) => {
     if (state === true) {
+      // boot.js is sending this visit to closing.html: keep the page hidden
+      if (document.documentElement.hasAttribute("data-closing-redirect")) return;
       document.documentElement.style.visibility = "";
       return;
     }
