@@ -63,9 +63,10 @@
   // true:  keep the page blank until the server has answered (old behaviour).
   var VERIFY_BEFORE_SHOW = false;
 
-  // Closing notice: a logged-in user who opens the site in a new browser session
-  // (new tab or window, after closing it) is sent to closing.html once.
-  // sessionStorage remembers that they have seen it until the tab is closed.
+  // Closing notice, on the main page (index.html) only. A logged-in user sees
+  // closing.html when they refresh the page, and also the first time they open
+  // the site in a new tab or window. "Take a look" on closing.html opens the site
+  // normally (that is not a refresh), so there is no loop.
   var CLOSING_SEEN_KEY = "acpClosingSeen";
   var SHOW_CLOSING_NOTICE = true;
 
@@ -74,6 +75,16 @@
       sessionStorage.setItem(CLOSING_SEEN_KEY + "_test", "1");
       sessionStorage.removeItem(CLOSING_SEEN_KEY + "_test");
       return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function isReload() {
+    try {
+      var nav = performance.getEntriesByType("navigation")[0];
+      if (nav) return nav.type === "reload";
+      return !!(performance.navigation && performance.navigation.type === 1);
     } catch (e) {
       return false;
     }
@@ -90,8 +101,8 @@
       }
     } else if (
       SHOW_CLOSING_NOTICE &&
-      sessionWorks() &&
-      !sessionStorage.getItem(CLOSING_SEEN_KEY)
+      root.getAttribute("data-page") === "home" &&
+      (isReload() || (sessionWorks() && !sessionStorage.getItem(CLOSING_SEEN_KEY)))
     ) {
       root.setAttribute("data-closing-redirect", "1");
       root.style.visibility = "hidden";
