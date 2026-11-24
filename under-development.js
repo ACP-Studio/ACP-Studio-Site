@@ -37,22 +37,32 @@
   }
 
   // Show the opening time in the visitor's own time zone (hidden for people in Dubai)
-  try {
-    var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var line = document.getElementById("devLocal");
-    if (line && zone !== "Asia/Dubai") {
-      var local = new Intl.DateTimeFormat(undefined, {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "short",
-      }).format(new Date(LAUNCH_AT));
-      line.textContent = "In your time zone: " + local + ".";
-      line.hidden = false;
+  var i18n = window.ACP_I18N;
+
+  function showLocalTime() {
+    try {
+      var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      var line = document.getElementById("devLocal");
+      if (line && zone !== "Asia/Dubai") {
+        var isAr = i18n && i18n.lang() === "ar";
+        var local = new Intl.DateTimeFormat(isAr ? "ar-u-nu-latn" : undefined, {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZoneName: "short",
+        }).format(new Date(LAUNCH_AT));
+        line.textContent = i18n
+          ? i18n.t("dev_local", { time: local })
+          : "In your time zone: " + local + ".";
+        line.hidden = false;
+      }
+    } catch (e) {
+      /* Intl not available: the Dubai time above is enough */
     }
-  } catch (e) {
-    /* Intl not available: the Dubai time above is enough */
   }
+
+  showLocalTime();
+  document.addEventListener("acp:langchange", showLocalTime);
 })();

@@ -9,9 +9,14 @@
     <link rel="icon" type="image/png" href="Assests/logo.png" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="under-development.css" />
-    <title>Under development · ACP-Studio</title>
+    <title data-i18n="under_development_acp_studio">Under development · ACP-Studio</title>
   </head>
   <body class="login-page dev-page">
+    <!-- Only the language button lives here; i18n.js adds it -->
+    <nav class="dynamic-island is-locked" id="dynamicIsland" aria-label="Main menu" data-i18n-attr="aria-label=main_menu">
+      <div class="island-status"></div>
+    </nav>
+
     <!-- Decorative glass orbs (the card blurs them) -->
     <div class="login-orbs" aria-hidden="true">
       <span></span><span></span><span></span><span></span><span></span>
@@ -20,42 +25,43 @@
     <main>
       <section class="login-card dev-card">
         <div class="intro-tag">ACP-Studio</div>
-        <h1>Under development</h1>
-        <p class="login-lead">
+        <h1 data-i18n="under_development">Under development</h1>
+        <p class="login-lead" data-i18n-html="the_site_is_still_being">
           The site is still being built. It will be available on
           <time datetime="2026-11-19T00:00:00+04:00"><strong>19 November 2026 at 16:00</strong></time>
           UAE time (GMT+4).
         </p>
 
-        <div class="countdown" role="timer" aria-label="Time left until the site opens">
+        <div class="countdown" role="timer" aria-label="Time left until the site opens" data-i18n-attr="aria-label=time_left_until_the_site">
           <div class="count-unit">
             <span class="count-num" id="cdDays">--</span>
-            <span class="count-label">days</span>
+            <span class="count-label" data-i18n="days">days</span>
           </div>
           <div class="count-unit">
             <span class="count-num" id="cdHours">--</span>
-            <span class="count-label">hours</span>
+            <span class="count-label" data-i18n="hours">hours</span>
           </div>
           <div class="count-unit">
             <span class="count-num" id="cdMinutes">--</span>
-            <span class="count-label">minutes</span>
+            <span class="count-label" data-i18n="minutes">minutes</span>
           </div>
           <div class="count-unit">
             <span class="count-num" id="cdSeconds">--</span>
-            <span class="count-label">seconds</span>
+            <span class="count-label" data-i18n="seconds">seconds</span>
           </div>
         </div>
 
         <p class="dev-local" id="devLocal" hidden></p>
 
         <p class="login-legal">
-          <a href="privacy.html">Privacy Policy</a> ·
-          <a href="terms.html">Terms &amp; Conditions</a> ·
-          <a href="cookies.html">Cookies</a>
+          <a href="privacy.html" data-i18n="privacy_policy_2">Privacy Policy</a> ·
+          <a href="terms.html" data-i18n="terms_conditions">Terms &amp; Conditions</a> ·
+          <a href="cookies.html" data-i18n="cookies">Cookies</a>
         </p>
       </section>
     </main>
 
+    <script src="i18n.js"></script>
     <script src="under-development.js"></script>
   </body>
 </html>

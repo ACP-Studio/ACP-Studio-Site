@@ -32,6 +32,10 @@ const auth = {
   },
 };
 
+// Language helper (i18n.js loads first). t("key") returns the text in the current language.
+const i18n = window.ACP_I18N;
+const t = (key, vars) => (i18n ? i18n.t(key, vars) : key);
+
 const isPublicPage = document.documentElement.dataset.access === "public";
 const isLoginPage = document.body.classList.contains("login-page");
 const isSoonPage = document.body.classList.contains("soon-page");
@@ -85,6 +89,7 @@ function setExpanded(next) {
 function syncIslandLock() {
   const locked = !canUseIsland();
   dynamicIsland.classList.toggle("is-locked", locked);
+  document.documentElement.setAttribute("data-auth", locked ? "out" : "in");
   if (locked) {
     dynamicIsland.removeAttribute("tabindex");
     setExpanded(false);
@@ -140,6 +145,7 @@ document.addEventListener("click", (e) => {
 dynamicIsland.addEventListener("click", (e) => {
   e.stopPropagation();
   if (canHover) return;
+  if (e.target.closest(".lang-toggle")) return;
   if (!e.target.closest("a")) {
     setExpanded(!isExpanded);
   } else {
@@ -151,12 +157,13 @@ const islandSection = document.getElementById("islandSection");
 
 if (islandSection && !isLoginPage && !isSoonPage) {
   const SECTIONS = [
-    ["home", "Home"],
-    ["projects", "C++ Projects"],
-    ["studio", "YouTube Studio"],
-    ["contact", "Contact"],
+    ["home", "island_home"],
+    ["projects", "island_projects"],
+    ["studio", "island_studio"],
+    ["contact", "island_contact"],
   ];
-  let shownLabel = islandSection.textContent;
+  let shownKey = SECTIONS[0][1];
+  islandSection.textContent = t(shownKey);
   let swapTimer;
   let ticking = false;
 
@@ -176,12 +183,12 @@ if (islandSection && !isLoginPage && !isSoonPage) {
   function updateIslandLabel() {
     ticking = false;
     const next = currentSectionLabel();
-    if (next === shownLabel) return;
-    shownLabel = next;
+    if (next === shownKey) return;
+    shownKey = next;
     clearTimeout(swapTimer);
     islandSection.classList.add("is-swapping");
     swapTimer = setTimeout(() => {
-      islandSection.textContent = next;
+      islandSection.textContent = t(next);
       islandSection.classList.remove("is-swapping");
     }, prefersReducedMotion ? 0 : 220);
   }
@@ -197,6 +204,11 @@ if (islandSection && !isLoginPage && !isSoonPage) {
     { passive: true },
   );
   window.addEventListener("resize", updateIslandLabel);
+  document.addEventListener("acp:langchange", () => {
+    clearTimeout(swapTimer);
+    islandSection.classList.remove("is-swapping");
+    islandSection.textContent = t(shownKey);
+  });
   updateIslandLabel();
 }
 
@@ -292,13 +304,13 @@ function renderAuthLink() {
   if (!authLink) return;
   const user = auth.get();
   if (user && user.email) {
-    authLink.textContent = "Log out";
+    authLink.textContent = t("auth_logout");
     authLink.setAttribute("href", "#");
-    authLink.title = `Signed in as ${user.email}`;
+    authLink.title = t("auth_signed_in_as", { email: user.email });
     authLink.removeAttribute("aria-current");
     authLink.classList.add("is-logout");
   } else {
-    authLink.textContent = "Log in";
+    authLink.textContent = t("auth_login");
     authLink.setAttribute("href", "login.html");
     authLink.removeAttribute("title");
     authLink.classList.remove("is-logout");
@@ -314,15 +326,15 @@ function confirmLogout(email) {
     overlay.innerHTML = `
       <div class="confirm-card" role="alertdialog" aria-modal="true"
            aria-labelledby="confirmTitle" aria-describedby="confirmText">
-        <h2 id="confirmTitle">Log out?</h2>
+        <h2 id="confirmTitle">${t("confirm_title")}</h2>
         <p id="confirmText"></p>
         <div class="confirm-actions">
-          <button type="button" class="btn btn-glass" data-answer="no">No, stay</button>
-          <button type="button" class="btn btn-danger" data-answer="yes">Yes, log out</button>
+          <button type="button" class="btn btn-glass" data-answer="no">${t("confirm_no")}</button>
+          <button type="button" class="btn btn-danger" data-answer="yes">${t("confirm_yes")}</button>
         </div>
       </div>`;
     overlay.querySelector("#confirmText").textContent =
-      `You're signed in as ${email}. Do you really want to log out?`;
+      t("confirm_text", { email });
 
     const noBtn = overlay.querySelector('[data-answer="no"]');
     const yesBtn = overlay.querySelector('[data-answer="yes"]');
@@ -391,6 +403,7 @@ if (authLink) {
     }
   });
   renderAuthLink();
+  document.addEventListener("acp:langchange", renderAuthLink);
 }
 
 const SUPABASE_URL = "https://ppvncqbwfkubqmuehsfl.supabase.co";
@@ -507,6 +520,13 @@ function isValidEmail(email) {
   return EMAIL_LOCAL.test(local) && EMAIL_DOMAIN.test(domain) && EMAIL_TLD.test(domain);
 }
 
+// Arabic keyboards can type ٠١٢٣٤٥٦٧٨٩ (or ۰۱۲۳۴۵۶۷۸۹); turn them into 0-9 for the code check.
+function normalizeDigits(text) {
+  return text
+    .replace(/[\u0660-\u0669]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace(/[\u06F0-\u06F9]/g, (d) => d.charCodeAt(0) - 0x06F0);
+}
+
 function storageWorks() {
   try {
     const probe = STORAGE_KEY + "_test";
@@ -533,18 +553,17 @@ if (loginForm) {
   const errorEl = document.getElementById("loginError");
   const submitBtn = document.getElementById("loginSubmit");
   const captchaBox = document.getElementById("captchaBox");
-  const BLOCKED_MESSAGE =
-    "Your browser is blocking site data, so we can't keep you logged in. Allow site data and try again.";
+  // message keys (the texts are in i18n.js)
   const SEND_ERRORS = {
-    captcha_failed: "The security check failed. Please try again.",
-    invalid_email: "That email doesn't look right. Check it and try again.",
-    rate_limited: "Too many tries. Please wait a few minutes and try again.",
-    unavailable: "We couldn't send the code right now. Please try again in a minute.",
+    captcha_failed: "err_captcha_failed",
+    invalid_email: "err_invalid_email",
+    rate_limited: "err_rate_limited",
+    unavailable: "err_unavailable_send",
   };
   const CODE_ERRORS = {
-    invalid_code: "That code is wrong or has expired. Check it, or use a different email to get a new one.",
-    rate_limited: "Too many tries. Please wait a few minutes and try again.",
-    unavailable: "We couldn't check the code right now. Please try again in a minute.",
+    invalid_code: "err_invalid_code",
+    rate_limited: "err_rate_limited",
+    unavailable: "err_unavailable_code",
   };
 
   let step = "email";
@@ -552,6 +571,19 @@ if (loginForm) {
   let pendingEmail = "";
   let captchaToken = "";
   let captchaWidgetId = null;
+  let captchaLang = "en";
+  let submitKey = "login_submit";
+
+  function setSubmitLabel(key) {
+    submitKey = key;
+    submitBtn.textContent = t(key);
+  }
+
+  function renderLead() {
+    if (!leadEl) return;
+    leadEl.textContent =
+      step === "code" ? t("login_lead_code", { email: pendingEmail }) : t("login_lead_email");
+  }
 
   const saved = auth.get();
   if (saved && saved.email) {
@@ -602,17 +634,14 @@ if (loginForm) {
     codeStep.hidden = !isCode;
     codeActions.hidden = !isCode;
     if (captchaBox) captchaBox.hidden = isCode || !captchaEnabled;
-    submitBtn.textContent = isCode ? "Verify code" : "Log in";
-    if (leadEl) {
-      leadEl.textContent = isCode
-        ? `We sent a code to ${pendingEmail}. Enter it below.`
-        : "Enter your email and we'll send you a login code.";
-    }
+    setSubmitLabel(isCode ? "login_verify" : "login_submit");
+    renderLead();
     if (isCode) {
       codeInput.value = "";
       codeInput.focus();
     } else {
-      resetCaptcha();
+      if (captchaWidgetId !== null && i18n && captchaLang !== i18n.lang()) renderCaptcha();
+      else resetCaptcha();
       emailInput.focus();
     }
     updateSubmit();
@@ -630,28 +659,52 @@ if (loginForm) {
     });
   }
 
-  if (leadEl) leadEl.textContent = "Enter your email and we'll send you a login code.";
+  renderLead();
+  setSubmitLabel("login_submit");
+
+  // (Re)draws the Cloudflare check, in the page language.
+  function renderCaptcha() {
+    if (!window.turnstile) return;
+    if (captchaWidgetId !== null) {
+      try {
+        window.turnstile.remove(captchaWidgetId);
+      } catch {
+      }
+      captchaWidgetId = null;
+    }
+    captchaToken = "";
+    captchaLang = i18n ? i18n.lang() : "en";
+    captchaWidgetId = window.turnstile.render(captchaBox, {
+      sitekey: TURNSTILE_SITE_KEY,
+      theme: "light",
+      language: captchaLang === "ar" ? "ar-eg" : "en",
+      size: captchaBox.clientWidth < 300 ? "compact" : "normal",
+      callback: (token) => { captchaToken = token; updateSubmit(); },
+      "expired-callback": () => { captchaToken = ""; updateSubmit(); },
+      "error-callback": () => {
+        captchaToken = "";
+        updateSubmit();
+        if (step === "email") showError(t("err_captcha_run"));
+      },
+    });
+    updateSubmit();
+  }
+
   if (captchaEnabled && captchaBox) {
     captchaBox.hidden = false;
     loadTurnstile()
-      .then(() => {
-        captchaWidgetId = window.turnstile.render(captchaBox, {
-          sitekey: TURNSTILE_SITE_KEY,
-          theme: "light",
-          size: captchaBox.clientWidth < 300 ? "compact" : "normal",
-          callback: (token) => { captchaToken = token; updateSubmit(); },
-          "expired-callback": () => { captchaToken = ""; updateSubmit(); },
-          "error-callback": () => {
-            captchaToken = "";
-            updateSubmit();
-            if (step === "email") showError("The security check could not run. Refresh the page and try again.");
-          },
-        });
-      })
+      .then(renderCaptcha)
       .catch(() => {
-        showError("The security check could not load. Check your connection and refresh the page.");
+        showError(t("err_captcha_load"));
       });
   }
+
+  document.addEventListener("acp:langchange", () => {
+    clearError();
+    renderLead();
+    submitBtn.textContent = t(submitKey);
+    if (captchaWidgetId !== null && step === "email") renderCaptcha();
+  });
   updateSubmit();
 
   changeEmail.addEventListener("click", (e) => {
@@ -665,15 +718,15 @@ if (loginForm) {
 
     if (step === "email") {
       const email = emailInput.value.trim().toLowerCase();
-      if (!email) return showError("Enter your email address.");
-      if (!isValidEmail(email)) return showError("That email doesn't look right. Check it and try again.");
-      if (captchaEnabled && !captchaToken) return showError("Please complete the security check first.");
-      if (!storageWorks()) return showError(BLOCKED_MESSAGE);
+      if (!email) return showError(t("err_enter_email"));
+      if (!isValidEmail(email)) return showError(t("err_invalid_email"));
+      if (captchaEnabled && !captchaToken) return showError(t("err_captcha_first"));
+      if (!storageWorks()) return showError(t("err_blocked"));
 
       clearError();
       submitting = true;
       updateSubmit();
-      submitBtn.textContent = "Sending code…";
+      setSubmitLabel("login_sending");
       const result = await sendLoginCode(email, captchaToken);
       submitting = false;
       if (result === "ok") {
@@ -681,26 +734,26 @@ if (loginForm) {
         setStep("code");
         return;
       }
-      submitBtn.textContent = "Log in";
+      setSubmitLabel("login_submit");
       resetCaptcha();
-      showError(SEND_ERRORS[result] || SEND_ERRORS.unavailable);
+      showError(t(SEND_ERRORS[result] || SEND_ERRORS.unavailable));
       return;
     }
 
-    const code = codeInput.value.replace(/\s/g, "");
-    if (!/^\d{6,10}$/.test(code)) return showError("Enter the code from your email (numbers only).");
+    const code = normalizeDigits(codeInput.value).replace(/\s/g, "");
+    if (!/^\d{6,10}$/.test(code)) return showError(t("err_code_format"));
 
     clearError();
     submitting = true;
     updateSubmit();
-    submitBtn.textContent = "Checking…";
+    setSubmitLabel("login_checking");
     const result = await checkLoginCode(pendingEmail, code);
     submitting = false;
-    submitBtn.textContent = "Verify code";
+    setSubmitLabel("login_verify");
     updateSubmit();
-    if (!result.ok) return showError(CODE_ERRORS[result.reason] || CODE_ERRORS.unavailable);
+    if (!result.ok) return showError(t(CODE_ERRORS[result.reason] || CODE_ERRORS.unavailable));
 
-    if (!auth.set(result.session)) return showError(BLOCKED_MESSAGE);
+    if (!auth.set(result.session)) return showError(t("err_blocked"));
 
     loginCard.classList.add("is-success");
     renderAuthLink();

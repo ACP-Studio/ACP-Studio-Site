@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://ppvncqbwfkubqmuehsfl.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="ACP-Studio: C++ projects and YouTube content by Zeyad Adel." />
+    <meta name="description" content="ACP-Studio: C++ projects and YouTube content by Zeyad Adel." data-i18n-attr="content=acp_studio_c_projects_and" />
     <meta name="theme-color" content="#1a1715" />
     <link rel="preconnect" href="https://ppvncqbwfkubqmuehsfl.supabase.co" crossorigin />
     <script src="boot.js"></script>
@@ -13,16 +13,16 @@
     <title>ACP-Studio</title>
   </head>
   <body>
-    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
+    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0" data-i18n-attr="aria-label=main_menu">
       <div class="island-status">
         <span class="island-section"><span id="islandSection">Home</span></span>
         <span class="island-name" id="islandTime">ACP Studio</span>
       </div>
       <div class="island-nav" id="islandNav">
-        <a href="#home">Home</a>
-        <a href="#projects">C++ Projects</a>
-        <a href="#studio">YouTube Studio</a>
-        <a href="#contact">Contact</a>
+        <a href="#home" data-i18n="home">Home</a>
+        <a href="#projects" data-i18n="c_projects">C++ Projects</a>
+        <a href="#studio" data-i18n="youtube_studio">YouTube Studio</a>
+        <a href="#contact" data-i18n="contact">Contact</a>
         <a href="login.html" id="authLink">Log Out</a>
       </div>
     </nav>
@@ -31,27 +31,27 @@
       <section id="home" class="intro-section container">
         <span class="glass" aria-hidden="true"></span>
         <div class="intro-content">
-          <div class="intro-tag fade-in-up">
+          <div class="intro-tag fade-in-up" data-i18n="c_developer_technical_creator">
             C++ Developer &amp; Technical Creator
           </div>
           <h1 class="intro-heading fade-in-up">ZEYAD ADEL</h1>
-          <p class="intro-subheading fade-in-up">
+          <p class="intro-subheading fade-in-up" data-i18n="crafting_elegant_solutions_in_c">
             Crafting elegant solutions in C++ and low-level systems. Building
             architecture that scales. Creating content that educates and
             inspires the next generation of Youth.
           </p>
           <div class="intro-cta fade-in-up">
-            <a href="#projects" class="btn btn-primary">View My Work</a>
+            <a href="#projects" class="btn btn-primary" data-i18n="view_my_work">View My Work</a>
           </div>
         </div>
 
         <div class="intro-visual">
           <div class="visual-card fade-in-up">
             <div class="card-header">
-              <h3>What's next!</h3>
+              <h3 data-i18n="what_s_next">What's next!</h3>
             </div>
             <hr class="card-divider" />
-            <img src="Imag.webp" alt="What's next" decoding="async" fetchpriority="high" />
+            <img src="Imag.webp" alt="What's next" decoding="async" fetchpriority="high" data-i18n-attr="alt=what_s_next_2" />
           </div>
         </div>
       </section>
@@ -60,8 +60,8 @@
         <div class="container">
           <span class="glass" aria-hidden="true"></span>
           <div class="section-header">
-            <h2 class="section-title fade-in-up">Systems &amp; Code Showcase</h2>
-            <p class="section-subtitle fade-in-up">
+            <h2 class="section-title fade-in-up" data-i18n="systems_code_showcase">Systems &amp; Code Showcase</h2>
+            <p class="section-subtitle fade-in-up" data-i18n="a_curated_collection_of_projects">
               A curated collection of projects, demonstrating clean design,
               performance optimization, and systems-level thinking.
             </p>
@@ -69,9 +69,9 @@
 
           <div class="projects-grid">
             <div class="project-card fade-in-up">
-              <div class="project-tag">Validation</div>
-              <h3 class="project-title">Login App</h3>
-              <p class="project-description">
+              <div class="project-tag" data-i18n="validation">Validation</div>
+              <h3 class="project-title" data-i18n="login_app">Login App</h3>
+              <p class="project-description" data-i18n="a_c_project_that_validates">
                 A C++ project that validates user names. It checks that the
                 input is not empty, contains only letters and spaces.
               </p>
@@ -81,20 +81,20 @@
                   href="https://github.com/ACP-Studio/Username-Valedation"
                   class="project-link"
                   target="_blank" rel="noopener noreferrer"
-                  >Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
+                   data-i18n="github">Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
                 <a
                   href="coming-soon.html"
                   class="youtube-project-link"
-                >
+                 data-i18n="youtube">
                   Youtube <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg>
                 </a>
               </div>
             </div>
 
             <div class="project-card fade-in-up">
-              <div class="project-tag">Validation</div>
-              <h3 class="project-title">Password app</h3>
-              <p class="project-description">
+              <div class="project-tag" data-i18n="validation">Validation</div>
+              <h3 class="project-title" data-i18n="password_app">Password app</h3>
+              <p class="project-description" data-i18n="a_friendly_c_project_that">
                 A friendly C++ project that demonstrates password validation.
                  The program checks if a password meets basic security rules (length, uppercase, lowercase, digit, special character, no spaces)
               </p>
@@ -103,11 +103,11 @@
                   href="https://github.com/ACP-Studio/Password-Validation"
                   class="project-link"
                   target="_blank" rel="noopener noreferrer"
-                  >Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
+                   data-i18n="github">Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
                 <a
                   href="coming-soon.html"
                   class="youtube-project-link"
-                >
+                 data-i18n="youtube">
                   Youtube <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg>
                 </a>
               </div>
@@ -115,11 +115,11 @@
 
             <div class="project-card fade-in-up">
               <div class="project-top">
-                <div class="project-tag">Network</div>
-                <span class="status-badge">Under development</span>
+                <div class="project-tag" data-i18n="network">Network</div>
+                <span class="status-badge" data-i18n="under_development">Under development</span>
               </div>
-              <h3 class="project-title">Network Analyzer app</h3>
-              <p class="project-description">
+              <h3 class="project-title" data-i18n="network_analyzer_app">Network Analyzer app</h3>
+              <p class="project-description" data-i18n="a_lightweight_c_network_analyzer">
                 A lightweight C++ network analyzer for Windows and Linux that tests latency, scans your network, and tracks your devices, with a CLI only
               </p>
               <div class="project-footer">
@@ -127,23 +127,23 @@
                   href="https://github.com/ACP-Studio/Net-analyzer-app"
                   class="project-link"
                   target="_blank" rel="noopener noreferrer"
-                  >Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
+                   data-i18n="github">Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
                 <a
                   href="coming-soon.html"
                   class="youtube-project-link"
-                >
+                 data-i18n="youtube">
                   Youtube <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg>
                 </a>
               </div>
             </div>
 
             <div class="project-card fade-in-up">
-              <div class="project-tag">Mathematics</div>
-              <h3 class="project-title">Advanced Calculator</h3>
-              <p class="project-description">
+              <div class="project-tag" data-i18n="mathematics">Mathematics</div>
+              <h3 class="project-title" data-i18n="advanced_calculator">Advanced Calculator</h3>
+              <p class="project-description" data-i18n="c_calculator_contain_complex_calculation">
                   C++ Calculator contain complex calculations and contain exponential functions with matrix site and more features                </p>
               <div class="project-footer">
-                <div class="project-notice" role="status">
+                <div class="project-notice" role="status" data-i18n="still_in_production_not_finished">
                   <svg class="icon" aria-hidden="true"><use href="icons.svg#wrench"></use></svg>
                   Still in production, not finished yet
                 </div>
@@ -151,20 +151,20 @@
             </div>
 
             <div class="project-card fade-in-up">
-              <div class="project-tag">commercial</div>
-              <h3 class="project-title">Computer store</h3>
-              <p class="project-description">
+              <div class="project-tag" data-i18n="commercial">commercial</div>
+              <h3 class="project-title" data-i18n="computer_store">Computer store</h3>
+              <p class="project-description" data-i18n="an_object_oriented_c_computer">
                   An object-oriented C++ computer parts store for the command line, with a shopping basket, compatibility checks and receipts.              </p>
               <div class="project-footer">
                 <a
                   href="https://github.com/ACP-Studio/Computer-Store"
                   class="project-link"
                   target="_blank" rel="noopener noreferrer"
-                  >Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
+                   data-i18n="github">Github <svg class="icon" aria-hidden="true"><use href="icons.svg#github"></use></svg></a>
                 <a
                   href="coming-soon.html"
                   class="youtube-project-link"
-                >
+                 data-i18n="youtube">
                   Youtube <svg class="icon" aria-hidden="true"><use href="icons.svg#youtube"></use></svg>
                 </a>
               </div>
@@ -177,8 +177,8 @@
         <div class="container">
           <span class="glass" aria-hidden="true"></span>
           <div class="section-header">
-            <h2 class="section-title fade-in-up">YouTube Studio</h2>
-            <p class="section-subtitle fade-in-up">
+            <h2 class="section-title fade-in-up" data-i18n="youtube_studio">YouTube Studio</h2>
+            <p class="section-subtitle fade-in-up" data-i18n="creating_in_depth_technical_content">
               Creating in-depth technical content about C++ architecture,
               systems programming, and software design principles.
             </p>
@@ -187,18 +187,18 @@
           <div class="studio-grid">
             <div class="studio-featured fade-in-up">
               <div class="studio-thumbnail">
-                <img src="Imag.webp" alt="Latest video" loading="lazy" decoding="async" />
+                <img src="Imag.webp" alt="Latest video" loading="lazy" decoding="async" data-i18n-attr="alt=latest_video" />
               </div>
               <div class="studio-info">
-                <h3>Building a Lock-Free Queue</h3>
-                <p>
+                <h3 data-i18n="building_a_lock_free_queue">Building a Lock-Free Queue</h3>
+                <p data-i18n="a_deep_dive_into_synchronization">
                   A deep dive into synchronization primitives, compare-and-swap
                   operations, and practical patterns for concurrent data
                   structures. Watch as we build production-grade infrastructure
                   from first principles.
                 </p>
               </div>
-              <a href="coming-soon.html" class="btn btn-primary btn-block">
+              <a href="coming-soon.html" class="btn btn-primary btn-block" data-i18n="watch_on_youtube">
                 Watch on YouTube
               </a>
             </div>
@@ -206,28 +206,28 @@
             <div class="studio-side">
               <div class="studio-featured fade-in-up">
                 <div class="studio-info">
-                  <h3>Channel Stats</h3>
+                  <h3 data-i18n="channel_stats">Channel Stats</h3>
                 </div>
                 <div class="studio-stats">
                   <div class="stat-box">
                     <div class="stat-number">1</div>
-                    <div class="stat-label">Subscribers</div>
+                    <div class="stat-label" data-i18n="subscribers">Subscribers</div>
                   </div>
                   <div class="stat-box">
                     <div class="stat-number">0</div>
-                    <div class="stat-label">Views</div>
+                    <div class="stat-label" data-i18n="views">Views</div>
                   </div>
                   <div class="stat-box">
                     <div class="stat-number">0</div>
-                    <div class="stat-label">Videos</div>
+                    <div class="stat-label" data-i18n="videos">Videos</div>
                   </div>
                 </div>
               </div>
 
               <div class="studio-featured fade-in-up">
                 <div class="studio-info">
-                  <h3>Recent Focus</h3>
-                  <p>
+                  <h3 data-i18n="recent_focus">Recent Focus</h3>
+                  <p data-i18n="c_standards_evolution_systems_design">
                     C++ standards evolution, systems design patterns, and modern
                     concurrency techniques.
                   </p>
@@ -247,40 +247,41 @@
             <div class="footer-name">
               <h5>Zeyad Adel</h5>
             </div>
-            <h3>
+            <h3 data-i18n-html="building_great_code_takes_time">
               " Building great code takes time...
               <svg class="icon" aria-hidden="true"><use href="icons.svg#time"></use></svg> "
             </h3>
           </div>
           <div class="footer-links">
-            <h4>Navigate</h4>
-            <a href="#home">Home</a>
-            <a href="#projects">Projects</a>
-            <a href="company.html">Company</a>
-            <a href="https://www.youtube.com/@ACP-Studios">YouTube</a>
+            <h4 data-i18n="navigate">Navigate</h4>
+            <a href="#home" data-i18n="home">Home</a>
+            <a href="#projects" data-i18n="projects">Projects</a>
+            <a href="company.html" data-i18n="company">Company</a>
+            <a href="https://www.youtube.com/@ACP-Studios" data-i18n="youtube_2">YouTube</a>
           </div>
           <div class="footer-links">
-            <h4>Connect</h4>
-            <a href="https://github.com/ACP-Studio/ACP-Studio">Github</a>
-            <a href="mailto:za8398866@gmail.com">Email</a>
-            <a href="https://www.instagram.com/acp__studio">Instagram</a>
+            <h4 data-i18n="connect">Connect</h4>
+            <a href="https://github.com/ACP-Studio/ACP-Studio" data-i18n="github">Github</a>
+            <a href="mailto:za8398866@gmail.com" data-i18n="email">Email</a>
+            <a href="https://www.instagram.com/acp__studio" data-i18n="instagram">Instagram</a>
           </div>
         </div>
         <div class="footer-divider"></div>
         <div class="footer-bottom">
-          <p>
+          <p data-i18n="2026_zeyad_adel_architected_with">
             &copy; 2026 Zeyad Adel. Architected with pure intelligence | "All
             Rights Reserved".
           </p>
           <div class="social-links">
-            <a href="privacy.html">Privacy policy</a>
-            <a href="terms.html">Terms &amp; Conditions</a>
-            <a href="cookies.html">Cookies</a>
+            <a href="privacy.html" data-i18n="privacy_policy">Privacy policy</a>
+            <a href="terms.html" data-i18n="terms_conditions">Terms &amp; Conditions</a>
+            <a href="cookies.html" data-i18n="cookies">Cookies</a>
           </div>
         </div>
       </div>
     </footer>
 
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

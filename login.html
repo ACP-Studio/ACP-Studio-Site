@@ -11,19 +11,19 @@
     <link rel="icon" type="image/png" href="Assests/logo.png" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="prefetch" href="closing.html" />
-    <title>Log in · ACP-Studio</title>
+    <title data-i18n="log_in_acp_studio">Log in · ACP-Studio</title>
   </head>
   <body class="login-page">
-    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
+    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0" data-i18n-attr="aria-label=main_menu">
       <div class="island-status">
-        <span class="island-section"><span id="islandSection">Log in</span></span>
+        <span class="island-section"><span id="islandSection" data-i18n="log_in">Log in</span></span>
         <span class="island-name">ACP Studio</span>
       </div>
       <div class="island-nav" id="islandNav">
-        <a href="index.html#home">Home</a>
-        <a href="index.html#projects">C++ Projects</a>
-        <a href="index.html#studio">YouTube Studio</a>
-        <a href="index.html#contact">Contact</a>
+        <a href="index.html#home" data-i18n="home">Home</a>
+        <a href="index.html#projects" data-i18n="c_projects">C++ Projects</a>
+        <a href="index.html#studio" data-i18n="youtube_studio">YouTube Studio</a>
+        <a href="index.html#contact" data-i18n="contact">Contact</a>
         <a href="login.html" id="authLink" aria-current="page">Log in</a>
       </div>
     </nav>
@@ -34,13 +34,13 @@
 
     <main>
       <section class="login-card fade-in-up" id="loginCard">
-        <div class="intro-tag">Welcome to ACP-Studio</div>
-        <h1>Log in</h1>
+        <div class="intro-tag" data-i18n="welcome_to_acp_studio">Welcome to ACP-Studio</div>
+        <h1 data-i18n="log_in">Log in</h1>
         <p class="login-lead">Enter your email and we'll send you a login code.</p>
 
         <form class="login-form" id="loginForm" novalidate>
           <div>
-            <label class="login-label" for="loginEmail">Email address</label>
+            <label class="login-label" for="loginEmail" data-i18n="email_address">Email address</label>
             <div class="input-glass" id="loginField">
               <input
                 type="email"
@@ -56,7 +56,7 @@
               />
             </div>
             <div id="codeStep" hidden>
-              <label class="login-label" for="loginCode">Code from your email</label>
+              <label class="login-label" for="loginCode" data-i18n="code_from_your_email">Code from your email</label>
               <div class="input-glass" id="codeField">
                 <input type="text" id="loginCode" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" spellcheck="false" />
               </div>
@@ -67,14 +67,14 @@
           <button type="submit" class="btn btn-primary login-submit" id="loginSubmit">
             Log in
           </button>
-          <p class="login-alt" id="codeActions" hidden><a href="#" id="changeEmail">Use a different email</a></p>
+          <p class="login-alt" id="codeActions" hidden><a href="#" id="changeEmail" data-i18n="use_a_different_email">Use a different email</a></p>
         </form>
 
         <p class="login-alt" id="loginContinue" hidden>
-          <a href="closing.html">Continue to the site</a>
+          <a href="closing.html" data-i18n="continue_to_the_site">Continue to the site</a>
         </p>
 
-        <p class="login-legal">
+        <p class="login-legal" data-i18n-html="by_continuing_you_agree_to">
           By continuing you agree to the
           <a href="terms.html">Terms &amp; Conditions</a> and the
           <a href="privacy.html">Privacy Policy</a>.
@@ -83,6 +83,7 @@
       </section>
     </main>
 
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

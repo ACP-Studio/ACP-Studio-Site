@@ -8,19 +8,19 @@
     <script src="boot.js"></script>
     <link rel="icon" type="image/png" href="Assests/logo.png" />
     <link rel="stylesheet" href="styles.css" />
-    <title>Cookies · ACP-Studio</title>
+    <title data-i18n="cookies_acp_studio">Cookies · ACP-Studio</title>
   </head>
   <body class="soon-page legal-page">
-    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0">
+    <nav class="dynamic-island" id="dynamicIsland" aria-label="Main menu" tabindex="0" data-i18n-attr="aria-label=main_menu">
       <div class="island-status">
-        <span class="island-section"><span id="islandSection">Cookies</span></span>
+        <span class="island-section"><span id="islandSection" data-i18n="cookies">Cookies</span></span>
         <span class="island-name" id="islandTime">ACP Studio</span>
       </div>
       <div class="island-nav" id="islandNav">
-        <a href="index.html#home">Home</a>
-        <a href="index.html#projects">C++ Projects</a>
-        <a href="index.html#studio">YouTube Studio</a>
-        <a href="index.html#contact">Contact</a>
+        <a href="index.html#home" data-i18n="home">Home</a>
+        <a href="index.html#projects" data-i18n="c_projects">C++ Projects</a>
+        <a href="index.html#studio" data-i18n="youtube_studio">YouTube Studio</a>
+        <a href="index.html#contact" data-i18n="contact">Contact</a>
         <a href="login.html" id="authLink">Log in</a>
       </div>
     </nav>
@@ -32,37 +32,42 @@
     <main>
       <article class="login-card legal-card fade-in-up">
         <div class="intro-tag">ACP-Studio</div>
-        <h1>Cookies</h1>
-        <p class="legal-meta">Last updated: November 23, 2026</p>
+        <h1 data-i18n="cookies">Cookies</h1>
+        <p class="legal-meta" data-i18n="last_updated_november_23_2026">Last updated: November 23, 2026</p>
 
         <div class="legal-body">
-          <h2>1. What this page covers</h2>
-          <p>
+          <h2 data-i18n="1_what_this_page_covers">1. What this page covers</h2>
+          <p data-i18n="cookies_and_similar_technologies_are">
             Cookies and similar technologies are small pieces of data a
             website saves in your browser. This page explains what ACP-Studio
             saves on your device.
           </p>
 
-          <h2>2. What we save</h2>
-          <p>
+          <h2 data-i18n="2_what_we_save">2. What we save</h2>
+          <p data-i18n="we_do_not_set_any">
             We do not set any tracking, advertising or analytics cookies. The
-            site saves one item in your browser's local storage:
+            site saves two items in your browser's local storage:
           </p>
           <ul>
-            <li>
+            <li data-i18n-html="strong_acpstudiouser_strong_your_email">
               <strong>acpStudioUser</strong>: your email address and the time
               you logged in. It keeps you logged in, so you do not have to
               type your email on every page. The site cannot work without it,
               because login is required.
             </li>
+            <li data-i18n-html="strong_acplang_strong_your_language">
+              <strong>acpLang</strong>: your language choice (English or
+              Arabic). The site works without it and shows English instead.
+            </li>
           </ul>
-          <p>
-            This item stays on your device for up to 30 days, or until you log
-            out or clear your browser data, whichever comes first.
+          <p data-i18n="this_item_stays_on_your">
+            The login item stays on your device for up to 30 days, or until you
+            log out or clear your browser data, whichever comes first. The
+            language item stays until you clear your browser data.
           </p>
 
-          <h2>3. Other services</h2>
-          <p>
+          <h2 data-i18n="3_other_services">3. Other services</h2>
+          <p data-i18n="the_fonts_and_icons_are">
             The fonts and icons are served from this site, so browsing does not
             contact any other company. Two outside services are used when you
             log in: Supabase, the database that stores your email, and
@@ -73,21 +78,21 @@
             read their own policies for details.
           </p>
 
-          <h2>4. How to remove or block it</h2>
+          <h2 data-i18n="4_how_to_remove_or">4. How to remove or block it</h2>
           <ul>
-            <li>Use the Log out link in the menu at the top. It deletes the saved item.</li>
-            <li>
+            <li data-i18n="use_the_log_out_link">Use the Log out link in the menu at the top. It deletes the login item.</li>
+            <li data-i18n="or_clear_the_site_data">
               Or clear the site data in your browser settings. You will then
               have to log in again to use the site.
             </li>
-            <li>
+            <li data-i18n="if_you_block_site_data">
               If you block site data completely, you will not be able to log
               in.
             </li>
           </ul>
 
-          <h2>5. Contact</h2>
-          <p>
+          <h2 data-i18n="5_contact">5. Contact</h2>
+          <p data-i18n-html="questions_a_href_mailto_za8398866">
             Questions:
             <a href="mailto:za8398866@gmail.com">za8398866@gmail.com</a>.
             More about how we use your email is in the
@@ -96,13 +101,14 @@
         </div>
 
         <div class="legal-nav">
-          <a href="privacy.html">Privacy Policy</a>
-          <a href="terms.html">Terms &amp; Conditions</a>
-          <a href="index.html">Back to the site</a>
+          <a href="privacy.html" data-i18n="privacy_policy_2">Privacy Policy</a>
+          <a href="terms.html" data-i18n="terms_conditions">Terms &amp; Conditions</a>
+          <a href="index.html" data-i18n="back_to_the_site">Back to the site</a>
         </div>
       </article>
     </main>
 
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

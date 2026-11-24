@@ -8,6 +8,19 @@
 
   root.classList.add("js");
 
+  // Language: set it before the page paints so there is no flash of the wrong
+  // language or direction. i18n.js translates the text itself.
+  var LANG_KEY = "acpLang";
+  var lang = "en";
+  try {
+    if (localStorage.getItem(LANG_KEY) === "ar") lang = "ar";
+  } catch (e) {
+  }
+  root.lang = lang;
+  root.dir = lang === "ar" ? "rtl" : "ltr";
+  window.ACP_LANG_KEY = LANG_KEY;
+  window.ACP_LANG = lang;
+
   if (window.top !== window.self) {
     root.style.display = "none";
     try {
@@ -40,6 +53,9 @@
 
   window.ACP_STORAGE_KEY = KEY;
   window.acpReadUser = readUser;
+
+  // Lets the CSS show the logged-out island (only the language button) from the first paint
+  root.setAttribute("data-auth", readUser() ? "in" : "out");
 
   // false: show the page immediately when a saved login exists and check it
   //        with the server in the background (script.js sends you to

@@ -58,7 +58,7 @@
 }
 
 .dev-card .login-legal {
-  text-align: left;
+  text-align: start;
 }
 
 @media (max-width: 420px) {

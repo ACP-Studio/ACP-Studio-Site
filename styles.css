@@ -197,8 +197,15 @@ body::after {
     background-color 600ms var(--island-smooth);
 }
 
-.dynamic-island.is-locked {
+/* Logged out: the island stays open and shows only the language button.
+   html[data-auth="out"] is set by boot.js so this is right from the first paint. */
+:is(.dynamic-island.is-locked, html[data-auth="out"] .dynamic-island) {
   cursor: default;
+  width: 112px;
+}
+
+:is(.dynamic-island.is-locked, html[data-auth="out"] .dynamic-island) .island-status {
+  visibility: hidden;
 }
 
 .dynamic-island.expanded {
@@ -262,7 +269,7 @@ body::after {
   transition: opacity 400ms var(--island-smooth) 150ms;
 }
 
-.dynamic-island.is-locked .island-nav {
+:is(.dynamic-island.is-locked, html[data-auth="out"] .dynamic-island) .island-nav {
   display: none;
 }
 
@@ -337,6 +344,64 @@ body::after {
 .island-nav a.is-logout:focus-visible {
   color: var(--on-ivory);
   background: var(--clay);
+}
+
+/* Language button (globe). Visible when the island is open, and always when logged out. */
+.lang-toggle {
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 250ms var(--island-smooth),
+    visibility 0s linear 650ms,
+    background-color var(--island-fast) var(--island-smooth);
+}
+
+.lang-toggle span {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.dynamic-island.expanded .lang-toggle {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 400ms var(--island-smooth) 200ms,
+    visibility 0s,
+    background-color var(--island-fast) var(--island-smooth);
+}
+
+:is(.dynamic-island.is-locked, html[data-auth="out"] .dynamic-island) .lang-toggle {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: background-color var(--island-fast) var(--island-smooth);
+}
+
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  background: var(--ivory);
+}
+
+.lang-toggle:focus-visible {
+  outline-offset: -3px;
 }
 
 .intro-section::after,
@@ -1081,7 +1146,7 @@ footer {
   font-weight: 500;
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
-  padding-left: 0.5rem;
+  padding-inline-start: 0.5rem;
 }
 
 .input-glass {
@@ -1132,7 +1197,7 @@ footer {
   color: var(--clay);
   font-size: 0.86rem;
   font-weight: 500;
-  padding-left: 0.5rem;
+  padding-inline-start: 0.5rem;
 }
 
 .login-submit {
@@ -1247,7 +1312,7 @@ footer {
 }
 
 .legal-body ul {
-  padding-left: 1.3rem;
+  padding-inline-start: 1.3rem;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -1269,7 +1334,7 @@ footer {
 }
 
 .soon-card {
-  text-align: left;
+  text-align: start;
 }
 
 .soon-card .login-lead {
@@ -1637,4 +1702,52 @@ footer {
   75% {
     transform: translateX(3px);
   }
+}
+
+/* ---------- Arabic (right-to-left) ---------- */
+html[lang="ar"] {
+  /* system Arabic fonts; the bundled Latin fonts have no Arabic letters */
+  --font:
+    "Segoe UI", Tahoma, "Noto Sans Arabic", "Geeza Pro", "SF Arabic",
+    -apple-system, BlinkMacSystemFont, system-ui, Arial, sans-serif;
+}
+
+/* Letter-spacing breaks the joined Arabic letters, so switch it off */
+html[lang="ar"] * {
+  letter-spacing: 0;
+}
+
+/* The name in the hero stays in Latin letters, so it keeps its tight spacing */
+html[lang="ar"] .intro-heading {
+  letter-spacing: -0.035em;
+}
+
+html[lang="ar"] body {
+  line-height: 1.75;
+}
+
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3 {
+  line-height: 1.35;
+}
+
+/* Emails and codes are always typed left to right */
+html[dir="rtl"] .input-glass input {
+  direction: ltr;
+  text-align: right;
+}
+
+html[dir="rtl"] .input-glass input::placeholder {
+  text-align: right;
+}
+
+/* The footer links slide towards the reading direction */
+html[dir="rtl"] .footer-links a:hover {
+  transform: translateX(-10px);
+}
+
+/* The Cloudflare check is drawn by Cloudflare; keep it left to right */
+html[dir="rtl"] .captcha-box {
+  direction: ltr;
 }
